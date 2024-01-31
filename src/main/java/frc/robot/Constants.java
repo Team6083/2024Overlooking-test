@@ -49,17 +49,22 @@ public final class Constants {
 
     public static final double kMaxModuleDriveVoltage = 12.0;
 
-    public static final double kClosedLoopRampRate = 0.25;//1 second 1 unit
-    
+    public static final double kClosedLoopRampRate = 0.25;// 1 second 1 unit
+
     public static final double kDesireSpeedtoMotorVoltage = kMaxModuleDriveVoltage / DrivetainConstants.kMaxSpeed;
 
     public static final double kMaxModuleTuringVoltage = 2.0;
 
     public static final double kMaxSpeedTurningDegree = 180.0;
 
-    public static final double kPRotController =  kMaxModuleTuringVoltage/kMaxSpeedTurningDegree;
+    public static final double kPRotController = kMaxModuleTuringVoltage / kMaxSpeedTurningDegree;
 
     public static final double kDRotController = 0.0004;
+  }
+
+  public static final class AprilTagConstants {
+    public static final double klimelightLensHeightInches = 0;
+    public static final double klimelightMountAngleDegrees = 0;
   }
 
 }

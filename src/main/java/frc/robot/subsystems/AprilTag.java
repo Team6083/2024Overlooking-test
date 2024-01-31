@@ -4,8 +4,10 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.AprilTagConstants;
 
-public class AprilTag {
+public class AprilTag extends SubsystemBase{
     public static NetworkTable table;
     public static NetworkTableEntry tx;// = table.getEntry("tx");// table.getEntry("tx");
     public static NetworkTableEntry ty;// = table.getEntry("ty");
@@ -35,8 +37,9 @@ public class AprilTag {
     public static double distance;
     public static double MyDistance;
 
-    public static final double limelightLensHeightInches = 0;
-    public static final double limelightMountAngleDegrees = 0;
+
+    //Write to constants
+
     public static double goalHeightInches;
 
     public static void init() {
@@ -121,8 +124,14 @@ public class AprilTag {
         SmartDashboard.putNumberArray("tr", tr);
 
 
-        SmartDashboard.putNumber("Distance", distance);
-        SmartDashboard.putNumber("MyDistance", MyDistance);
+        // SmartDashboard.putNumber("Distance", distance);
+        // SmartDashboard.putNumber("MyDistance", MyDistance);
+    }
+
+    @Override
+    public void periodic() {
+      // This method will be called once per scheduler run
+      init();
     }
 }
 
