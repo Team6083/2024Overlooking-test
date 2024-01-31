@@ -76,15 +76,10 @@ public class AprilTag extends SubsystemBase{
         putDashboard();
     }
 
-    /*
-     * public static void readValue() {
-     * v = tv.getDouble(0);
-     * x = tx.getDouble(0.0);
-     * y = tx.getDouble(0.0);
-     * ID = tid.getDouble(0);
-     * latency = tl.getDouble(0.0);
-     * }
-     */
+    public static void change_APipeline(){
+        table.getEntry("pipeline").setNumber(AprilTagConstants.A_pipeline);
+    }
+
 
     // public static double getDistance() {
     //     double targetOffsetAngle_Vertical = ty.getDouble(0.0);
