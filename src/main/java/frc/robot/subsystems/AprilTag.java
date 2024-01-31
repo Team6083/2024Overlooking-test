@@ -73,7 +73,7 @@ public class AprilTag extends SubsystemBase{
 
         // distance = getDistance();
         // MyDistance = getMyDistance();
-        putDashboard();
+        // putDashboard();
     }
 
     public static void change_APipeline(){
@@ -118,7 +118,7 @@ public class AprilTag extends SubsystemBase{
         SmartDashboard.putNumberArray("cr", cr);
         SmartDashboard.putNumberArray("tr", tr);
 
-
+        SmartDashboard.putNumber("current pipeline", table.getEntry("getpipe").getDouble(0));
         // SmartDashboard.putNumber("Distance", distance);
         // SmartDashboard.putNumber("MyDistance", MyDistance);
     }
@@ -126,7 +126,7 @@ public class AprilTag extends SubsystemBase{
     @Override
     public void periodic() {
       // This method will be called once per scheduler run
-      init();
+      putDashboard();
     }
 }
 
