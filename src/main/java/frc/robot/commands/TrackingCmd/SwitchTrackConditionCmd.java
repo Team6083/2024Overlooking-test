@@ -5,13 +5,13 @@
 package frc.robot.commands.TrackingCmd;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Drivetain;
+import frc.robot.subsystems.Drivebase;
 
 public class SwitchTrackConditionCmd extends Command {
   /** Creates a new SwitchTrackConditionCmd. */
-  private final Drivetain drivetain;
+  private final Drivebase drivetain;
 
-  public SwitchTrackConditionCmd(Drivetain drivetain) {
+  public SwitchTrackConditionCmd(Drivebase drivetain) {
     this.drivetain = drivetain;
     addRequirements(this.drivetain);
     // Use addRequirements() here to declare subsystem dependencies.

@@ -8,11 +8,11 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.DrivetainConstants;
-import frc.robot.subsystems.Drivetain;
+import frc.robot.subsystems.Drivebase;
 
 public class SwerveJoystickCmd extends Command {
   /** Creates a new SwerveTest1ManualCmd. */
-  private final Drivetain drivetain;
+  private final Drivebase drivetain;
   private final CommandXboxController main;
   private final SlewRateLimiter xLimiter;
   private final SlewRateLimiter yLimiter;
@@ -20,7 +20,7 @@ public class SwerveJoystickCmd extends Command {
   private final double drivetainMaxSpeed = DrivetainConstants.kMaxSpeed;
   private double xSpeed, ySpeed, rotSpeed;
 
-  public SwerveJoystickCmd(Drivetain drivetain, CommandXboxController main) {
+  public SwerveJoystickCmd(Drivebase drivetain, CommandXboxController main) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.drivetain = drivetain;
     this.main = main;

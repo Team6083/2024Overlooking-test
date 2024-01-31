@@ -5,13 +5,13 @@
 package frc.robot.commands.TrackingCmd;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Drivetain;
+import frc.robot.subsystems.Drivebase;
 
 public class MinusTrackingError extends Command {
   /** Creates a new MinusTrackingError. */
-  private final Drivetain drivetain;
+  private final Drivebase drivetain;
 
-  public MinusTrackingError(Drivetain drivetain) {
+  public MinusTrackingError(Drivebase drivetain) {
     this.drivetain = drivetain;
     addRequirements(drivetain);
     // Use addRequirements() here to declare subsystem dependencies.

@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DrivetainConstants;
 
-public class Drivetain extends SubsystemBase {
+public class Drivebase extends SubsystemBase {
   /** Creates a new Drivetain. */
   private final Translation2d frontLeftLocation;
   private final Translation2d frontRightLocation;
@@ -41,7 +41,7 @@ public class Drivetain extends SubsystemBase {
 
   private SwerveModuleState[] swerveModuleStates = new SwerveModuleState[4];
 
-  public Drivetain() {
+  public Drivebase() {
     frontLeftLocation = new Translation2d(0.3, 0.3);
     frontRightLocation = new Translation2d(0.3, -0.3);
     backLeftLocation = new Translation2d(-0.3, 0.3);
