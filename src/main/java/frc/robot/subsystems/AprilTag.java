@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.AprilTagConstants;
 
-public class AprilTag extends SubsystemBase{
+public class AprilTag extends SubsystemBase {
     public static NetworkTable table;
     public static NetworkTableEntry tx;// = table.getEntry("tx");// table.getEntry("tx");
     public static NetworkTableEntry ty;// = table.getEntry("ty");
@@ -37,8 +37,7 @@ public class AprilTag extends SubsystemBase{
     public static double distance;
     public static double MyDistance;
 
-
-    //Write to constants
+    // Write to constants
 
     public static double goalHeightInches;
 
@@ -59,7 +58,19 @@ public class AprilTag extends SubsystemBase{
     }
 
     public static void loop() {
-        // readValue();
+        putDashboard();
+    }
+
+    public static void change_APipeline() {
+        table.getEntry("pipeline").setNumber(AprilTagConstants.A_pipeline);
+    }
+
+    public static double InchesToMeter(double inches) {
+        double meters = inches * 0.0254;
+        return meters;
+    }
+
+    public static void readValue() {
         v = tv.getDouble(0);
         x = tx.getDouble(0.0);
         y = tx.getDouble(0.0);
@@ -70,40 +81,19 @@ public class AprilTag extends SubsystemBase{
         ct = CT.getDoubleArray(new double[6]);
         tr = TR.getDoubleArray(new double[6]);
         cr = CR.getDoubleArray(new double[6]);
-
-        // distance = getDistance();
-        // MyDistance = getMyDistance();
-        // putDashboard();
     }
 
-    public static void change_APipeline(){
-        table.getEntry("pipeline").setNumber(AprilTagConstants.A_pipeline);
+    public static double getMyDistance() {
+
+        readValue();
+        double target_height = bt[1]; // botpose in targetspace y
+        double x_dis = bt[0];
+        double z_dis = bt[2];
+        double hori_dis = Math.pow(Math.pow(x_dis, 2) + Math.pow(z_dis, 2), 1.0 / 2);
+        MyDistance = Math.pow(Math.pow(target_height, 2) + Math.pow(hori_dis, 2), 1.0 / 2);
+
+        return MyDistance;
     }
-
-
-    // public static double getDistance() {
-    //     double targetOffsetAngle_Vertical = ty.getDouble(0.0);
-    //     goalHeightInches = bt[1];
-    //     // distance from the target to the floor
-    //     double angleToGoalDegrees = limelightMountAngleDegrees + targetOffsetAngle_Vertical;
-    //     double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
-    //     distance = (goalHeightInches - limelightLensHeightInches) / Math.tan(angleToGoalRadians);
-    //     // goalheightinches read pose
-    //     return distance;
-    // }
-
-    // public static double getMyDistance() {
-    //     // double a = -1;
-    //     // double b = (a > 0) ? a : -a;
-
-    //     double target_height = bt[1]; // botpose in targetspace y
-    //     double x_dis = bt[0];
-    //     double z_dis = bt[2];
-    //     double hori_dis = Math.pow(Math.pow(x_dis, 2) + Math.pow(z_dis, 2), 1.0 / 2);
-    //     MyDistance = Math.pow(Math.pow(target_height, 2) + Math.pow(hori_dis, 2), 1.0 / 2);
-
-    //     return MyDistance;
-    // }
 
     public static void putDashboard() {
         SmartDashboard.putNumber("hasTarget", v);
@@ -113,20 +103,28 @@ public class AprilTag extends SubsystemBase{
         SmartDashboard.putNumber("LimelightID", ID);
         SmartDashboard.putNumber("latency", latency);
 
-        SmartDashboard.putNumberArray("bt", bt);
-        SmartDashboard.putNumberArray("ct", ct);
-        SmartDashboard.putNumberArray("cr", cr);
-        SmartDashboard.putNumberArray("tr", tr);
+        // SmartDashboard.putNumberArray("bt", bt);
+        // SmartDashboard.putNumberArray("ct", ct);
+        // SmartDashboard.putNumberArray("cr", cr);
+        // SmartDashboard.putNumberArray("tr", tr);
+
+        // botpose in targetspace
+        SmartDashboard.putNumber("bt_x", bt[0]);
+        SmartDashboard.putNumber("bt_y", bt[1]);
+        SmartDashboard.putNumber("bt_z", bt[2]);
+
+        // campose in targetspace
+        SmartDashboard.putNumber("ct_x", ct[0]);
+        SmartDashboard.putNumber("ct_y", ct[1]);
+        SmartDashboard.putNumber("ct_z", ct[2]);
 
         SmartDashboard.putNumber("current pipeline", table.getEntry("getpipe").getDouble(0));
-        // SmartDashboard.putNumber("Distance", distance);
-        // SmartDashboard.putNumber("MyDistance", MyDistance);
+        SmartDashboard.putNumber("MyDistance", MyDistance);
     }
 
     @Override
     public void periodic() {
-      // This method will be called once per scheduler run
-      putDashboard();
+        // This method will be called once per scheduler run
+        putDashboard();
     }
 }
-
