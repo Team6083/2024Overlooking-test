@@ -12,7 +12,7 @@ import frc.robot.subsystems.Drivebase;
 
 public class SwerveJoystickCmd extends Command {
   /** Creates a new SwerveTest1ManualCmd. */
-  private final Drivebase drivetain;
+  private final Drivebase drivebase;
   private final CommandXboxController main;
   private final SlewRateLimiter xLimiter;
   private final SlewRateLimiter yLimiter;
@@ -20,14 +20,14 @@ public class SwerveJoystickCmd extends Command {
   private final double drivetainMaxSpeed = DrivetainConstants.kMaxSpeed;
   private double xSpeed, ySpeed, rotSpeed;
 
-  public SwerveJoystickCmd(Drivebase drivetain, CommandXboxController main) {
+  public SwerveJoystickCmd(Drivebase drivebase, CommandXboxController main) {
     // Use addRequirements() here to declare subsystem dependencies.
-    this.drivetain = drivetain;
+    this.drivebase = drivebase;
     this.main = main;
     xLimiter = new SlewRateLimiter(DrivetainConstants.xLimiterRateLimit);
     yLimiter = new SlewRateLimiter(DrivetainConstants.yLimiterRateLimit);
     rotLimiter = new SlewRateLimiter(DrivetainConstants.rotLimiterRateLimit);
-    addRequirements(this.drivetain);
+    addRequirements(this.drivebase);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -36,7 +36,7 @@ public class SwerveJoystickCmd extends Command {
     xSpeed = xLimiter.calculate(main.getLeftX()) * drivetainMaxSpeed;
     ySpeed = yLimiter.calculate(main.getLeftY()) * drivetainMaxSpeed;
     rotSpeed = rotLimiter.calculate(main.getRightX()) * drivetainMaxSpeed;
-    drivetain.drive(-xSpeed, ySpeed, rotSpeed, !main.getHID().getAButton());
+    drivebase.drive(-xSpeed, ySpeed, rotSpeed, !main.getHID().getAButton());
     // drivetain.testDrive(main.getLeftY(), main.getLeftX());
   }
 
