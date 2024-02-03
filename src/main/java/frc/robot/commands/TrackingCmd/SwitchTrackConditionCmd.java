@@ -22,4 +22,9 @@ public class SwitchTrackConditionCmd extends Command {
   public void initialize() {
     drivetain.switchTrackCondition();
   }
+
+  @Override
+  public boolean isFinished() {
+    return false;
+  }
 }
