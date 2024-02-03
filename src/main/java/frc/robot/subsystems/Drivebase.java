@@ -30,7 +30,7 @@ public class Drivebase extends SubsystemBase {
   private final SwerveModule backLeft;
   private final SwerveModule backRight;
 
-  private final VisionTracking track;
+  private final VisionTrackingLimelight track;
 
   private final SwerveDriveKinematics kinematics;
   private final SwerveDriveOdometry odometry;
@@ -54,7 +54,7 @@ public class Drivebase extends SubsystemBase {
     backLeft = new SwerveModule(12, 13, 2, DrivetainConstants.kBackLeftDriveMotorInverted);
     backRight = new SwerveModule(17, 16, 3, DrivetainConstants.kBackRightDriveMotorInverted);
 
-    track = new VisionTracking();
+    track = new VisionTrackingLimelight();
 
     SmartDashboard.putData("frontLeft", frontLeft);
     SmartDashboard.putData("frontRight", frontRight);

@@ -8,13 +8,13 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.Drivebase;
-import frc.robot.subsystems.VisionTracking;
+import frc.robot.subsystems.VisionTrackingLimelight;
 
 public class TrackingDriveCmd extends Command {
   /** Creates a new TrackingDriveCmd. */
   private final Drivebase drivebase;
   private final CommandXboxController main;
-  private final VisionTracking visionTracking = new VisionTracking();
+  private final VisionTrackingLimelight visionTracking = new VisionTrackingLimelight();
   private final SlewRateLimiter speedLimiter = new SlewRateLimiter(3.0);
   private double speed;
 
