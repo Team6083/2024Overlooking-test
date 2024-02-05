@@ -26,7 +26,7 @@ public class AprilTagDetect extends Command {
 
   @Override
   public void execute(){
-    apriltag.loop();
+    double distance = apriltag.getMyDistance();
   }
 
   @Override

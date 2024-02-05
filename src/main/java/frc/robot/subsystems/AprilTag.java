@@ -4,6 +4,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.AprilTagConstants;
 
@@ -57,18 +58,14 @@ public class AprilTag extends SubsystemBase {
 
     }
 
-    public static void loop() {
-        putDashboard();
-    }
-
     public static void change_APipeline() {
         table.getEntry("pipeline").setNumber(AprilTagConstants.A_pipeline);
     }
 
-    public static double InchesToMeter(double inches) {
-        double meters = inches * 0.0254;
-        return meters;
-    }
+    // public static double InchesToMeter(double inches) {
+    //     double meters = inches * 0.0254;
+    //     return meters;
+    // }
 
     public static void readValue() {
         v = tv.getDouble(0);
@@ -96,6 +93,7 @@ public class AprilTag extends SubsystemBase {
     }
 
     public static void putDashboard() {
+        readValue();
         SmartDashboard.putNumber("hasTarget", v);
         SmartDashboard.putNumber("LimelightX", x);
         SmartDashboard.putNumber("LimelightY", y);
@@ -119,7 +117,7 @@ public class AprilTag extends SubsystemBase {
         SmartDashboard.putNumber("ct_z", ct[2]);
 
         SmartDashboard.putNumber("current pipeline", table.getEntry("getpipe").getDouble(0));
-        SmartDashboard.putNumber("MyDistance", MyDistance);
+        SmartDashboard.putNumber("Distance", MyDistance);
     }
 
     @Override
