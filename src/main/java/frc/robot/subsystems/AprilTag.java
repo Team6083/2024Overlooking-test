@@ -92,6 +92,11 @@ public class AprilTag extends SubsystemBase {
         return MyDistance;
     }
 
+    public double getTx() {
+        double tx = table.getEntry("tx").getDouble(0.0);
+        return tx;
+      }
+
     public static void putDashboard() {
         readValue();
         SmartDashboard.putNumber("hasTarget", v);
