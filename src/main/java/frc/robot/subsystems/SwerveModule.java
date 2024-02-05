@@ -71,7 +71,6 @@ public class SwerveModule extends SubsystemBase {
     resetAllEncoder();
     clearSticklyFault();
     stopModule();
-    SmartDashboard.putNumber("degree", 0);
   }
 
   public void configDriveMotor() {
@@ -125,20 +124,6 @@ public class SwerveModule extends SubsystemBase {
     double turningMotorVoltage = rotController.calculate(currentTurningDegree, goalState.angle.getDegrees());
     double[] moduleState = { driveMotorVoltage, turningMotorVoltage };
     return moduleState;
-  }
-
-  public double checkOverVoltage(double currentVoltage, double goalVoltage){
-    double error = goalVoltage-currentVoltage;
-    if(Math.abs(goalVoltage)<DrivetainConstants.kMinSpeed*ModuleConstants.kDesireSpeedtoMotorVoltage){
-      return goalVoltage;
-    }
-    if(Math.abs(error)>ModuleConstants.kLimitModuleDriveVoltage){
-      error *= ModuleConstants.kLimitModuleDriveVoltage/ModuleConstants.kMaxModuleDriveVoltage;
-      return currentVoltage+error;
-    }else{
-      return goalVoltage;
-    }
-    
   }
 
   public void setDesiredState(SwerveModuleState desiredState) {
