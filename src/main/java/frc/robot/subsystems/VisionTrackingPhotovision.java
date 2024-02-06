@@ -36,60 +36,60 @@ public class VisionTrackingPhotovision extends SubsystemBase {
   }
 
   public List<Pose2d> getNotes() {
-        List<Pose2d> poses = new ArrayList<Pose2d>();
+    List<Pose2d> poses = new ArrayList<Pose2d>();
 
-        if (!noteCamera.isConnected()) {
-          System.out.println("Camera not connected");
-            return poses;
-        }
-
-        var results = noteCamera.getLatestResult();
-        if(!results.hasTargets()){
-          System.out.println("No target");
-          return poses;
-        }
-        List<PhotonTrackedTarget> targets = results.getTargets();
-
-        for (PhotonTrackedTarget trackedTarget : targets) {
-            // this calc assumes pitch angle is positive UP, so flip the camera's pitch
-            // note that PV target angles are in degrees
-            double d = Math.abs(noteCamPosition.getZ() / 
-                Math.tan(-noteCamPosition.getRotation().getY() + Math.toRadians(trackedTarget.getPitch())));
-            double yaw = Math.toRadians(trackedTarget.getYaw());
-            double x = d * Math.cos(yaw);
-            double y = d * Math.sin(yaw);
-            poses.add(new Pose2d(x, y, new Rotation2d(0)));
-        }
-        return poses;
+    if (!noteCamera.isConnected()) {
+      System.out.println("Camera not connected");
+      return poses;
     }
 
-private void clearTagSolutions(Field2d field) {
-        if (field == null)
-            return;
-        field.getObject("tagSolutions").setPoses();
-        field.getObject("visionPose").setPoses();
-        field.getObject("visionAltPose").setPoses();
-        field.getObject("visibleTagPoses").setPoses();
+    var results = noteCamera.getLatestResult();
+    if (!results.hasTargets()) {
+      System.out.println("No target");
+      return poses;
     }
+    List<PhotonTrackedTarget> targets = results.getTargets();
 
-    private void plotPose(Field2d field, String label, Pose2d pose) {
-      if (field == null)
-          return;
-      if (pose == null)
-          field.getObject(label).setPoses();
-      else
-          field.getObject(label).setPose(pose);
+    for (PhotonTrackedTarget trackedTarget : targets) {
+      // this calc assumes pitch angle is positive UP, so flip the camera's pitch
+      // note that PV target angles are in degrees
+      double d = Math.abs(noteCamPosition.getZ() /
+          Math.tan(-noteCamPosition.getRotation().getY() + Math.toRadians(trackedTarget.getPitch())));
+      double yaw = Math.toRadians(trackedTarget.getYaw());
+      double x = d * Math.cos(yaw);
+      double y = d * Math.sin(yaw);
+      poses.add(new Pose2d(x, y, new Rotation2d(0)));
+    }
+    return poses;
+  }
+
+  public void clearTagSolutions(Field2d field) {
+    if (field == null)
+      return;
+    field.getObject("tagSolutions").setPoses();
+    field.getObject("visionPose").setPoses();
+    field.getObject("visionAltPose").setPoses();
+    field.getObject("visibleTagPoses").setPoses();
+  }
+
+  public void plotPose(Field2d field, String label, Pose2d pose) {
+    if (field == null)
+      return;
+    if (pose == null)
+      field.getObject(label).setPoses();
+    else
+      field.getObject(label).setPose(pose);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     List<Pose2d> notes = getNotes();
-        SmartDashboard.putNumber("noteVision/nFound", notes.size());
-        if (notes.size() > 0) {
-            Pose2d p = notes.get(0);
-            SmartDashboard.putNumber("noteVision/x", p.getX());
-            SmartDashboard.putNumber("noteVision/y", p.getY());
-        }
+    SmartDashboard.putNumber("noteVision/nFound", notes.size());
+    if (notes.size() > 0) {
+      Pose2d p = notes.get(0);
+      SmartDashboard.putNumber("noteVision/x", p.getX());
+      SmartDashboard.putNumber("noteVision/y", p.getY());
+    }
   }
 }
