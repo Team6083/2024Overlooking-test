@@ -16,7 +16,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.DrivetainConstants;
+import frc.robot.Constants.DrivebaseConstants;
 
 public class Drivebase extends SubsystemBase {
   /** Creates a new Drivetain. */
@@ -49,10 +49,14 @@ public class Drivebase extends SubsystemBase {
     backLeftLocation = new Translation2d(-0.3, 0.3);
     backRightLocation = new Translation2d(-0.3, -0.3);
 
-    frontLeft = new SwerveModule(10, 11, 5, DrivetainConstants.kFrontLeftDriveMotorInverted);
-    frontRight = new SwerveModule(15, 14, 4, DrivetainConstants.kFrontRightDriveMotorInverted);
-    backLeft = new SwerveModule(12, 13, 2, DrivetainConstants.kBackLeftDriveMotorInverted);
-    backRight = new SwerveModule(17, 16, 3, DrivetainConstants.kBackRightDriveMotorInverted);
+    frontLeft = new SwerveModule(10, 11, 5, DrivebaseConstants.kFrontLeftDriveMotorInverted,
+        DrivebaseConstants.kFrontLeftCanCoderMagOffset);
+    frontRight = new SwerveModule(15, 14, 4, DrivebaseConstants.kFrontRightDriveMotorInverted,
+        DrivebaseConstants.kFrontRightCanCoderMagOffset);
+    backLeft = new SwerveModule(12, 13, 2, DrivebaseConstants.kBackLeftDriveMotorInverted,
+        DrivebaseConstants.kBackLeftCanCoderMagOffset);
+    backRight = new SwerveModule(17, 16, 3, DrivebaseConstants.kBackRightDriveMotorInverted,
+        DrivebaseConstants.kBackRightCanCoderMagOffset);
 
     track = new VisionTrackingLimelight();
 
@@ -101,23 +105,23 @@ public class Drivebase extends SubsystemBase {
    */
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
     if (trackingCondition) {
-      rot = (track.getTx() - trackTargetError) * DrivetainConstants.kPTrackingValue;
+      rot = (track.getTx() - trackTargetError) * DrivebaseConstants.kPTrackingValue;
     }
     swerveModuleStates = kinematics.toSwerveModuleStates(
         fieldRelative
             ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, gyro.getRotation2d())
             : new ChassisSpeeds(xSpeed, ySpeed, rot));
-    SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, DrivetainConstants.kMaxSpeed);
+    SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, DrivebaseConstants.kMaxSpeed);
     frontLeft.setDesiredState(swerveModuleStates[0]);
     frontRight.setDesiredState(swerveModuleStates[1]);
     backLeft.setDesiredState(swerveModuleStates[2]);
     backRight.setDesiredState(swerveModuleStates[3]);
   }
 
-  public void trackingDrive(double tx, double speed){
-    double tanValue = tx/20;
-    swerveModuleStates = kinematics.toSwerveModuleStates(new ChassisSpeeds(0.5*tanValue, 0.5, 0));
-    SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, DrivetainConstants.kMaxSpeed);
+  public void trackingDrive(double tx, double speed) {
+    double tanValue = tx / 20;
+    swerveModuleStates = kinematics.toSwerveModuleStates(new ChassisSpeeds(0.5 * tanValue, 0.5, 0));
+    SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, DrivebaseConstants.kMaxSpeed);
     Rotation2d angle = swerveModuleStates[0].angle;
     frontLeft.setDesiredState(new SwerveModuleState(speed, angle));
   }
