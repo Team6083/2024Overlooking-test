@@ -73,7 +73,7 @@ public class Drivebase extends SubsystemBase {
     // create the odometry
     odometry = new SwerveDriveOdometry(
         kinematics,
-        gyro.getRotation2d(),
+        getRotation2d(),
         new SwerveModulePosition[] {
             frontLeft.getPosition(),
             frontRight.getPosition(),
@@ -90,6 +90,11 @@ public class Drivebase extends SubsystemBase {
 
   public void setGyroReset() {
     gyro.reset();
+  }
+
+  public Rotation2d getRotation2d() {
+    return (DrivebaseConstants.kGyroInverted) ? Rotation2d.fromDegrees(360.0 - gyro.getRotation2d().getDegrees())
+        : gyro.getRotation2d();
   }
 
   /**
@@ -109,7 +114,7 @@ public class Drivebase extends SubsystemBase {
     }
     swerveModuleStates = kinematics.toSwerveModuleStates(
         fieldRelative
-            ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, gyro.getRotation2d())
+            ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getRotation2d())
             : new ChassisSpeeds(xSpeed, ySpeed, rot));
     SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, DrivebaseConstants.kMaxSpeed);
     frontLeft.setDesiredState(swerveModuleStates[0]);
@@ -145,7 +150,7 @@ public class Drivebase extends SubsystemBase {
   /** Updates the field relative position of the robot. */
   public void updateOdometry() {
     odometry.update(
-        gyro.getRotation2d(),
+        getRotation2d(),
         new SwerveModulePosition[] {
             frontLeft.getPosition(),
             frontRight.getPosition(),
@@ -159,7 +164,7 @@ public class Drivebase extends SubsystemBase {
     SmartDashboard.putNumber("frontRight_speed", swerveModuleStates[1].speedMetersPerSecond);
     SmartDashboard.putNumber("backLeft_speed", swerveModuleStates[2].speedMetersPerSecond);
     SmartDashboard.putNumber("backRight_speed", swerveModuleStates[3].speedMetersPerSecond);
-    SmartDashboard.putNumber("gyro_heading", gyro.getRotation2d().getDegrees());
+    SmartDashboard.putNumber("gyro_heading", getRotation2d().getDegrees()%360.0);
   }
 
   @Override
