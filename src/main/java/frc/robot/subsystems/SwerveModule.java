@@ -19,7 +19,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.DrivetainConstants;
+import frc.robot.Constants.DrivebaseConstants;
 import frc.robot.Constants.ModuleConstants;
 
 public class SwerveModule extends SubsystemBase {
@@ -55,7 +55,7 @@ public class SwerveModule extends SubsystemBase {
     driveMotor.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus0, 40);
     driveMotor.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus1, 150);
     driveMotor.setPeriodicFramePeriod(CANSparkLowLevel.PeriodicFrame.kStatus2, 150);
-    driveMotor.setClosedLoopRampRate(ModuleConstants.kClosedLoopRampRate);
+    driveMotor.setClosedLoopRampRate(ModuleConstants.kDriveClosedLoopRampRate);
     turningMotor.setSmartCurrentLimit(20);
     driveMotor.setClosedLoopRampRate(0.25);
 
@@ -127,7 +127,7 @@ public class SwerveModule extends SubsystemBase {
   }
 
   public void setDesiredState(SwerveModuleState desiredState) {
-    if (Math.abs(desiredState.speedMetersPerSecond) < DrivetainConstants.kMinJoyStickValue) {
+    if (Math.abs(desiredState.speedMetersPerSecond) < DrivebaseConstants.kMinJoyStickValue) {
       stopModule();
     } else {
       var moduleState = optimizeOutputVoltage(desiredState, getRotation());
