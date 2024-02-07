@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -22,11 +23,11 @@ public class AprilTag extends SubsystemBase {
     public NetworkTableEntry CT;
 
     public double v;
+    public double a;
     public double x;
     public double y;
     public double area;
     public double ID;
-    // public static double cl;
     public double latency;
 
     public double[] bt; // botpose_targetspace
@@ -34,94 +35,93 @@ public class AprilTag extends SubsystemBase {
     public double[] tr; // targetpose_robotpose;
     public double[] ct; // camerapose_targetspace
 
-    public double distance;
     public double MyDistance;
 
-    // Write to constants
-
+    public final double limelightLensHeightInches = 0;
+    public final double limelightMountAngleDegrees = 0;
+    public double targetOffsetAngle_Vertical;
+    public double angleToGoalDegrees;
+    public double angleToGoalRadians;
     public double goalHeightInches;
 
     public void init() {
         table = NetworkTableInstance.getDefault().getTable("limelight");
-        tx = table.getEntry("tx");// table.getEntry("tx");
-        ty = table.getEntry("ty");
-        ta = table.getEntry("ta");
-        tv = table.getEntry("tv");
-        tid = table.getEntry("tid");
-        tl = table.getEntry("tl");
 
-        BT = table.getEntry("botpose_targetspace");
-        CR = table.getEntry("camerapose_robotspace");
-        TR = table.getEntry("targepose_robotspace");
-        CT = table.getEntry("camerapose_targetspace");
-
-    }
-
-    public void change_APipeline() {
-        table.getEntry("pipeline").setNumber(AprilTagConstants.A_pipeline);
-    }
-
-    // public static double InchesToMeter(double inches) {
-    //     double meters = inches * 0.0254;
-    //     return meters;
-    // }
-
-    public void readValue() {
-        v = tv.getDouble(0);
-        x = tx.getDouble(0.0);
-        y = tx.getDouble(0.0);
-        ID = tid.getDouble(0);
-        latency = tl.getDouble(0.0);
-
-        bt = BT.getDoubleArray(new double[6]);
-        ct = CT.getDoubleArray(new double[6]);
-        tr = TR.getDoubleArray(new double[6]);
-        cr = CR.getDoubleArray(new double[6]);
     }
 
     public double getMyDistance() {
-
-        readValue();
-        double target_height = bt[1]; // botpose in targetspace y
-        double x_dis = bt[0];
-        double z_dis = bt[2];
+        // readValue();
+        double target_height = getBT()[1]; // botpose in targetspace y
+        double x_dis = getBT()[0];
+        double z_dis = getBT()[2];
         double hori_dis = Math.pow(Math.pow(x_dis, 2) + Math.pow(z_dis, 2), 1.0 / 2);
-        MyDistance = Math.pow(Math.pow(target_height, 2) + Math.pow(hori_dis, 2), 1.0 / 2);
+        MyDistance = Math.pow(Math.pow(target_height, 2) + Math.pow(hori_dis, 2), 1.0
+                / 2);
 
         return MyDistance;
     }
 
     public double getTx() {
-        double tx = table.getEntry("tx").getDouble(0.0);
-        return tx;
-      }
+        init();
+        x = table.getEntry("tx").getDouble(0);
+        return x;
+    }
+
+    public double getTy() {
+        init();
+        y = table.getEntry("ty").getDouble(0);
+        return y;
+    }
+
+    public double getTa() {
+        init();
+        a = table.getEntry("ta").getDouble(0);
+        return a;
+    }
+
+    public double getTv() {
+        init();
+        v = table.getEntry("tv").getDouble(0);
+        return v;
+    }
+
+    public double getTID() {
+        init();
+        ID = table.getEntry("tid").getDouble(0);
+        return ID;
+    }
+
+    public double getTl() {
+        init();
+        latency = table.getEntry("tl").getDouble(0);
+        return latency;
+    }
+
+    public double[] getBT() {
+        init();
+        bt = table.getEntry("botpose_targetspace").getDoubleArray(new double[6]);
+        return bt;
+    }
 
     public void putDashboard() {
-        readValue();
-        SmartDashboard.putNumber("hasTarget", v);
-        SmartDashboard.putNumber("LimelightX", x);
-        SmartDashboard.putNumber("LimelightY", y);
-        SmartDashboard.putNumber("LimelightArea", area);
-        SmartDashboard.putNumber("LimelightID", ID);
-        SmartDashboard.putNumber("latency", latency);
-
-        // SmartDashboard.putNumberArray("bt", bt);
-        // SmartDashboard.putNumberArray("ct", ct);
-        // SmartDashboard.putNumberArray("cr", cr);
-        // SmartDashboard.putNumberArray("tr", tr);
+        // SmartDashboard.putNumber("hasTarget", getTv());
+        SmartDashboard.putNumber("LimelightX", getTx());
+        SmartDashboard.putNumber("LimelightY", getTy());
+        // SmartDashboard.putNumber("LimelightArea", getTa());
+        SmartDashboard.putNumber("LimelightID", getTID());
+        SmartDashboard.putNumber("latency", getTl());
 
         // botpose in targetspace
-        SmartDashboard.putNumber("bt_x", bt[0]);
-        SmartDashboard.putNumber("bt_y", bt[1]);
-        SmartDashboard.putNumber("bt_z", bt[2]);
+        SmartDashboard.putNumber("bt_x", getBT()[0]);
+        SmartDashboard.putNumber("bt_y", getBT()[1]);
+        SmartDashboard.putNumber("bt_z", getBT()[2]);
 
         // campose in targetspace
-        SmartDashboard.putNumber("ct_x", ct[0]);
-        SmartDashboard.putNumber("ct_y", ct[1]);
-        SmartDashboard.putNumber("ct_z", ct[2]);
+        // SmartDashboard.putNumber("ct_x", getCT()[0]);
+        // SmartDashboard.putNumber("ct_y", getCT()[1]);
+        // SmartDashboard.putNumber("ct_z", getCT()[2]);
 
-        SmartDashboard.putNumber("current pipeline", table.getEntry("getpipe").getDouble(0));
-        SmartDashboard.putNumber("Distance", MyDistance);
+        SmartDashboard.putNumber("MyDistance", getMyDistance());
     }
 
     @Override
