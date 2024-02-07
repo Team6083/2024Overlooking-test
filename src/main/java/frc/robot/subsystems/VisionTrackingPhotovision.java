@@ -32,6 +32,7 @@ public class VisionTrackingPhotovision extends SubsystemBase {
 
   public VisionTrackingPhotovision() {
     noteCamera = new PhotonCamera(cameraName);
+    noteCamera.setPipelineIndex(0);
     noteCamera.setDriverMode(false);
   }
 
