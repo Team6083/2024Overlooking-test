@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -37,10 +38,17 @@ public class Drivebase extends SubsystemBase {
 
   private final AHRS gyro;
 
+  public PIDController pid;
+
+  public final double kP = 0.03;
+  public final double kI = 0;
+  public final double kD = 0;
+
   private double trackTargetError = 0.0;
 
   private Boolean trackingCondition = false;
 
+  private AprilTag tag;
   private SwerveModuleState[] swerveModuleStates = new SwerveModuleState[4];
 
   public Drivebase() {
@@ -59,6 +67,7 @@ public class Drivebase extends SubsystemBase {
         DrivebaseConstants.kBackRightCanCoderMagOffset);
 
     track = new VisionTrackingLimelight();
+    tag = new AprilTag();
 
     SmartDashboard.putData("frontLeft", frontLeft);
     SmartDashboard.putData("frontRight", frontRight);
@@ -123,6 +132,17 @@ public class Drivebase extends SubsystemBase {
     backRight.setDesiredState(swerveModuleStates[3]);
   }
 
+  public void faceTarget() {
+    double offset = tag.getTx();
+    double hasTarget = tag.getTv();
+    pid = new PIDController(kP, kI, kD);
+    double rot = 0;
+    if (hasTarget == 1) {
+      rot = pid.calculate(offset, 0);
+    }
+    drive(0, 0, -rot, false);
+  }
+
   public void trackingDrive(double tx, double speed) {
     double tanValue = tx / 20;
     swerveModuleStates = kinematics.toSwerveModuleStates(new ChassisSpeeds(0.5 * tanValue, 0.5, 0));
@@ -164,7 +184,7 @@ public class Drivebase extends SubsystemBase {
     SmartDashboard.putNumber("frontRight_speed", swerveModuleStates[1].speedMetersPerSecond);
     SmartDashboard.putNumber("backLeft_speed", swerveModuleStates[2].speedMetersPerSecond);
     SmartDashboard.putNumber("backRight_speed", swerveModuleStates[3].speedMetersPerSecond);
-    SmartDashboard.putNumber("gyro_heading", getRotation2d().getDegrees()%360.0);
+    SmartDashboard.putNumber("gyro_heading", getRotation2d().getDegrees() % 360.0);
   }
 
   @Override

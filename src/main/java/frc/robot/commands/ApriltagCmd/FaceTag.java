@@ -4,45 +4,39 @@
 
 package frc.robot.commands.ApriltagCmd;
 
-import edu.wpi.first.math.filter.SlewRateLimiter;
+// import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.AprilTag;
 import frc.robot.subsystems.Drivebase;
 
-public class AprilTagFollow extends Command {
-  /** Creates a new AprilTagFollow. */
-  private final Drivebase drivebase;
-  private final AprilTag aprilTag;
-  private final CommandXboxController main;
-  private final SlewRateLimiter speedLimiter = new SlewRateLimiter(3.0);
-  public double speed;
-
-  public AprilTagFollow(Drivebase drivebase, AprilTag aprilTag, CommandXboxController main) {
+public class FaceTag extends Command {
+  /** Creates a new FaceTag. */
+  public AprilTag aprilTag;
+  public Drivebase drivebase;
+  public FaceTag(AprilTag aprilTag, Drivebase drivebase) {
     this.aprilTag = aprilTag;
     this.drivebase = drivebase;
-    this.main = main;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(drivebase, aprilTag);
+    addRequirements(aprilTag, drivebase);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    aprilTag.init();
-    aprilTag.change_APipeline();
-    speed = speedLimiter.calculate(main.getLeftY() * 5.0);
+    // aprilTag.init();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    drivebase.trackingDrive(aprilTag.getTx(), speed);
+  drivebase.faceTarget();
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    drivebase.drive(0, 0, 0, true);
+  }
 
   // Returns true when the command should end.
   @Override
