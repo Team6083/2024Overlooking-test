@@ -10,6 +10,7 @@ import frc.robot.commands.SwerveJoystickCmd;
 import frc.robot.commands.ApriltagCmd.FaceTag;
 import frc.robot.commands.ApriltagCmd.FixDistanceCmd;
 import frc.robot.commands.ApriltagCmd.FollowCmd;
+import frc.robot.commands.ApriltagCmd.Go45andFaceCmd;
 import frc.robot.commands.TrackingCmd.AddTrackingError;
 import frc.robot.commands.TrackingCmd.MinusTrackingError;
 import frc.robot.commands.TrackingCmd.SwitchTrackConditionCmd;
@@ -74,6 +75,7 @@ public class RobotContainer {
     driverController.a().toggleOnTrue(new FaceTag(tag, drivetain));
     driverController.b().toggleOnTrue(new FixDistanceCmd(drivetain));
     driverController.y().toggleOnTrue(new FollowCmd());
+    driverController.pov(45).toggleOnFalse(new Go45andFaceCmd()); // wonder if we should use on true
     driverController.pov(90).onTrue(new AddTrackingError(drivetain));
     driverController.pov(270).onTrue(new MinusTrackingError(drivetain));
   }

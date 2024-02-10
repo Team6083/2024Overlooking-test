@@ -40,6 +40,7 @@ public class Drivebase extends SubsystemBase {
 
   private PIDController pid;
   private PIDController follow_pid;
+  public static PIDController PID;
 
   // face method value maybe correct
   private final double kP = 0.03;
@@ -50,6 +51,11 @@ public class Drivebase extends SubsystemBase {
   private final double kfP = 0.15;
   private final double kfI = 0;
   private final double kfD = 0.006;
+
+  // fix position
+  public static final double kPP = 0.03;
+  public static final double kII = 0;
+  public static final double kDD = 0;
 
   private double trackTargetError = 0.0;
 
@@ -179,6 +185,30 @@ public class Drivebase extends SubsystemBase {
     SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, DrivebaseConstants.kMaxSpeed);
     Rotation2d angle = swerveModuleStates[0].angle;
     frontLeft.setDesiredState(new SwerveModuleState(speed, angle));
+  }
+
+  public void Go_To_45_Angle() {
+    double tan = Math.abs(tag.getBT()[0]) / Math.abs(tag.getBT()[2]);
+    PID = new PIDController(kPP, kII, kDD);
+    double speed = 0;
+    if (tag.getTv() == 1) {
+      speed = PID.calculate(tan, 1);
+    }
+    if (Math.abs(tan - 1) < 0.01) {
+      drive(speed, 0, 0, false);
+    }
+  }
+
+  public void Go_To_30_Angle() {
+    double tan = Math.abs(tag.getBT()[0]) / Math.abs(tag.getBT()[2]);
+    PID = new PIDController(kPP, kII, kDD);
+    double speed = 0;
+    if (tag.getTv() == 1) {
+      speed = PID.calculate(tan, 0.3);
+    }
+    if (Math.abs(tan - 1) < 0.01) {
+      drive(speed, 0, 0, false);
+    }
   }
 
   public void switchTrackCondition() {
