@@ -150,13 +150,24 @@ public class Drivebase extends SubsystemBase {
     drive(0, 0, -rot, false);
   }
 
-  public void FixDistance(){
+  public void faceTargetMethod2() {
+    double offset = tag.getTx();
+    double hasTarget = tag.getTv();
+    pid = new PIDController(kP, kI, kD);
+    double rot = 0;
+    if (hasTarget == 1) {
+      rot = pid.calculate(offset, 0);
+    }
+    drive(0, 0, -rot, false);
+  }
+
+  public void FixDistance() {
     double x_dis = tag.getBT()[2];
     double hasTarget = tag.getTv();
     double speed = 0;
     follow_pid = new PIDController(kfP, kfI, kfD);
     if (hasTarget == 1) {
-        speed = follow_pid.calculate(-x_dis, 0.5);
+      speed = follow_pid.calculate(-x_dis, 0.5);
     }
     SmartDashboard.putNumber("x_dis", x_dis);
     drive(speed, 0, 0, false);
