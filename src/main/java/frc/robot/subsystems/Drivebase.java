@@ -38,11 +38,18 @@ public class Drivebase extends SubsystemBase {
 
   private final AHRS gyro;
 
-  public PIDController pid;
+  private PIDController pid;
+  private PIDController follow_pid;
 
-  public final double kP = 0.03;
-  public final double kI = 0;
-  public final double kD = 0;
+  // face method value maybe correct
+  private final double kP = 0.03;
+  private final double kI = 0;
+  private final double kD = 0;
+
+  // fix distance value not determined yet
+  private final double kfP = 0.15;
+  private final double kfI = 0;
+  private final double kfD = 0.006;
 
   private double trackTargetError = 0.0;
 
@@ -141,6 +148,17 @@ public class Drivebase extends SubsystemBase {
       rot = pid.calculate(offset, 0);
     }
     drive(0, 0, -rot, false);
+  }
+
+  public void FixDistance(){
+    double x_dis = tag.getBT()[2];
+    double hasTarget = tag.getTv();
+    double speed = 0;
+    follow_pid = new PIDController(kfP, kfI, kfD);
+    if (hasTarget == 1) {
+        speed = follow_pid.calculate(-x_dis, 0.5);
+    }
+    SmartDashboard.putNumber("x_dis", x_dis);
   }
 
   public void trackingDrive(double tx, double speed) {
