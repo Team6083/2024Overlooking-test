@@ -92,7 +92,6 @@ public final class Constants {
     public static final int A_pipeline = 0;
     public static final double klimelightLensHeightInches = 0;
     public static final double klimelightMountAngleDegrees = 0;
-  
   }
 
 }

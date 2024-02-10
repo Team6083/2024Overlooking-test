@@ -159,6 +159,7 @@ public class Drivebase extends SubsystemBase {
         speed = follow_pid.calculate(-x_dis, 0.5);
     }
     SmartDashboard.putNumber("x_dis", x_dis);
+    drive(speed, 0, 0, false);
   }
 
   public void trackingDrive(double tx, double speed) {
