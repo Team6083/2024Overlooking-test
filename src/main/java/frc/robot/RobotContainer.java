@@ -7,9 +7,13 @@ package frc.robot;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.SwerveJoystickCmd;
+import frc.robot.commands.ApriltagCmd.FaceTag;
+import frc.robot.commands.ApriltagCmd.FixDistanceCmd;
+import frc.robot.commands.ApriltagCmd.FollowCmd;
 import frc.robot.commands.TrackingCmd.AddTrackingError;
 import frc.robot.commands.TrackingCmd.MinusTrackingError;
 import frc.robot.commands.TrackingCmd.SwitchTrackConditionCmd;
+import frc.robot.subsystems.AprilTag;
 import frc.robot.subsystems.Drivebase;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -30,6 +34,7 @@ public class RobotContainer {
 
   // The robot's subsystems and commands are defined here...
   Drivebase drivetain;
+  AprilTag tag;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController driverController = new CommandXboxController(
@@ -63,8 +68,12 @@ public class RobotContainer {
   private void configureBindings() {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
     drivetain = new Drivebase();
+    tag = new AprilTag();
     drivetain.setDefaultCommand(new SwerveJoystickCmd(drivetain, driverController));
     driverController.x().onTrue(new SwitchTrackConditionCmd(drivetain));
+    driverController.a().toggleOnTrue(new FaceTag(tag, drivetain));
+    driverController.b().toggleOnTrue(new FixDistanceCmd(drivetain));
+    driverController.y().toggleOnTrue(new FollowCmd());
     driverController.pov(90).onTrue(new AddTrackingError(drivetain));
     driverController.pov(270).onTrue(new MinusTrackingError(drivetain));
   }
