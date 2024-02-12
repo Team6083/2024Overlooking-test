@@ -7,6 +7,7 @@ package frc.robot;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.SwerveJoystickCmd;
+import frc.robot.commands.ApriltagCmd.FaceMethod2Cmd;
 import frc.robot.commands.ApriltagCmd.FaceTag;
 import frc.robot.commands.ApriltagCmd.FixDistanceCmd;
 import frc.robot.commands.ApriltagCmd.FollowCmd;
@@ -75,12 +76,13 @@ public class RobotContainer {
     driverController.a().toggleOnTrue(new FaceTag(tag, drivetain));
     driverController.b().toggleOnTrue(new FixDistanceCmd(drivetain));
     driverController.y().toggleOnTrue(new FollowCmd());
+  driverController.back().toggleOnTrue(new FaceMethod2Cmd(drivetain));
     driverController.pov(45).toggleOnFalse(new Go45andFaceCmd()); // wonder if we should use on true
     driverController.pov(90).onTrue(new AddTrackingError(drivetain));
     driverController.pov(270).onTrue(new MinusTrackingError(drivetain));
   }
 
-  private void putDashboard(){
+  private void putDashboard() {
     SmartDashboard.putNumber("xbox_leftX", driverController.getLeftX());
     SmartDashboard.putNumber("xbox_leftY", driverController.getLeftY());
     SmartDashboard.putNumber("pd_voltage", pd.getVoltage());
