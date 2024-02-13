@@ -31,7 +31,7 @@ public class Drivebase extends SubsystemBase {
   private final SwerveModule backLeft;
   private final SwerveModule backRight;
 
-  private final VisionTrackingLimelight track;
+  // private final VisionTrackingLimelight track;
 
   private final SwerveDriveKinematics kinematics;
   private final SwerveDriveOdometry odometry;
@@ -70,16 +70,20 @@ public class Drivebase extends SubsystemBase {
     backLeftLocation = new Translation2d(-0.3, 0.3);
     backRightLocation = new Translation2d(-0.3, -0.3);
 
-    frontLeft = new SwerveModule(10, 11, 5, DrivebaseConstants.kFrontLeftDriveMotorInverted,
-        DrivebaseConstants.kFrontLeftCanCoderMagOffset);
-    frontRight = new SwerveModule(15, 14, 4, DrivebaseConstants.kFrontRightDriveMotorInverted,
-        DrivebaseConstants.kFrontRightCanCoderMagOffset);
-    backLeft = new SwerveModule(12, 13, 2, DrivebaseConstants.kBackLeftDriveMotorInverted,
-        DrivebaseConstants.kBackLeftCanCoderMagOffset);
-    backRight = new SwerveModule(17, 16, 3, DrivebaseConstants.kBackRightDriveMotorInverted,
-        DrivebaseConstants.kBackRightCanCoderMagOffset);
+    frontLeft = new SwerveModule(DrivebaseConstants.kFrontLeftDriveMotorChannel,
+    DrivebaseConstants.kFrontLeftTurningMotorChannel, DrivebaseConstants.kFrontLeftTurningEncoderChannel,
+    DrivebaseConstants.kFrontLeftDriveMotorInverted, DrivebaseConstants.kFrontLeftCanCoderMagOffset);
+frontRight = new SwerveModule(DrivebaseConstants.kFrontRightDriveMotorChannel,
+    DrivebaseConstants.kFrontRightTurningMotorChannel, DrivebaseConstants.kFrontRightTurningEncoderChannel,
+    DrivebaseConstants.kFrontRightDriveMotorInverted, DrivebaseConstants.kFrontRightCanCoderMagOffset);
+backLeft = new SwerveModule(DrivebaseConstants.kBackLeftDriveMotorChannel,
+    DrivebaseConstants.kBackLeftTurningMotorChannel, DrivebaseConstants.kBackLeftTurningEncoderChannel,
+    DrivebaseConstants.kBackLeftDriveMotorInverted, DrivebaseConstants.kBackLeftCanCoderMagOffset);
+backRight = new SwerveModule(DrivebaseConstants.kBackRightDriveMotorChannel,
+    DrivebaseConstants.kBackRightTurningMotorChannel, DrivebaseConstants.kBackRightTurningEncoderChannel,
+    DrivebaseConstants.kBackRightDriveMotorInverted, DrivebaseConstants.kBackRightCanCoderMagOffset);
 
-    track = new VisionTrackingLimelight();
+    // track = new VisionTrackingLimelight();
     tag = new AprilTag();
 
     SmartDashboard.putData("frontLeft", frontLeft);
@@ -115,9 +119,11 @@ public class Drivebase extends SubsystemBase {
   }
 
   public Rotation2d getRotation2d() {
-    return (DrivebaseConstants.kGyroInverted) ? Rotation2d.fromDegrees(360.0 - gyro.getRotation2d().getDegrees())
-        : gyro.getRotation2d();
+    return Rotation2d.fromDegrees(DrivebaseConstants.kGyroOffSet
+        + ((DrivebaseConstants.kGyroInverted) ? (360.0 - gyro.getRotation2d().getDegrees())
+            : gyro.getRotation2d().getDegrees()));
   }
+
 
   /**
    * Method to drive the robot using joystick info.
@@ -131,9 +137,6 @@ public class Drivebase extends SubsystemBase {
    *                      using the wpi function to set the speed of the swerve
    */
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
-    if (trackingCondition) {
-      rot = (track.getTx() - trackTargetError) * DrivebaseConstants.kPTrackingValue;
-    }
     swerveModuleStates = kinematics.toSwerveModuleStates(
         fieldRelative
             ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getRotation2d())

@@ -44,7 +44,7 @@ public class AprilTag extends SubsystemBase {
     public double angleToGoalRadians;
     public double goalHeightInches;
 
-    public void init() {
+    public AprilTag() {
         table = NetworkTableInstance.getDefault().getTable("limelight");
 
     }
@@ -62,43 +62,36 @@ public class AprilTag extends SubsystemBase {
     }
 
     public double getTx() {
-        init();
         x = table.getEntry("tx").getDouble(0);
         return x;
     }
 
     public double getTy() {
-        init();
         y = table.getEntry("ty").getDouble(0);
         return y;
     }
 
     public double getTa() {
-        init();
         a = table.getEntry("ta").getDouble(0);
         return a;
     }
 
     public double getTv() {
-        init();
         v = table.getEntry("tv").getDouble(0);
         return v;
     }
 
     public double getTID() {
-        init();
         ID = table.getEntry("tid").getDouble(0);
         return ID;
     }
 
     public double getTl() {
-        init();
         latency = table.getEntry("tl").getDouble(0);
         return latency;
     }
 
     public double[] getBT() {
-        init();
         bt = table.getEntry("botpose_targetspace").getDoubleArray(new double[6]);
         return bt;
     }

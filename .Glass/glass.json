@@ -1,0 +1,23 @@
+{
+  "NetworkTables": {
+    "retained": {
+      "limelight": {
+        "open": true
+      }
+    },
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/backLeft": "Subsystem",
+      "/SmartDashboard/backRight": "Subsystem",
+      "/SmartDashboard/frontLeft": "Subsystem",
+      "/SmartDashboard/frontRight": "Subsystem"
+    }
+  },
+  "NetworkTables Info": {
+    "visible": true
+  },
+  "NetworkTables Settings": {
+    "mode": "Client (NT4)",
+    "serverTeam": "6083"
+  }
+}
