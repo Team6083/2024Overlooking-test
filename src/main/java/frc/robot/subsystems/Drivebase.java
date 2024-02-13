@@ -43,7 +43,7 @@ public class Drivebase extends SubsystemBase {
   public static PIDController PID;
 
   // face method value maybe correct
-  private final double kP = 0.03;
+  private final double kP = 0.08;
   private final double kI = 0;
   private final double kD = 0;
 
@@ -167,6 +167,7 @@ backRight = new SwerveModule(DrivebaseConstants.kBackRightDriveMotorChannel,
     if (hasTarget == 1) {
       rot = pid.calculate(offset, 0);
     }
+    SmartDashboard.putNumber("rot", rot);
     drive(0, 0, -rot, false);
   }
 

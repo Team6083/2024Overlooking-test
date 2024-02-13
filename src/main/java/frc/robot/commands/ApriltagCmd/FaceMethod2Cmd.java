@@ -15,7 +15,6 @@ public class FaceMethod2Cmd extends Command {
   private final Drivebase drivebase;
 
   public FaceMethod2Cmd(Drivebase drivebase) {
-    // this.tag = tag;
     this.drivebase = drivebase;
     addRequirements(drivebase);
     // Use addRequirements() here to declare subsystem dependencies.
@@ -35,7 +34,7 @@ public class FaceMethod2Cmd extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    drivebase.drive(0, 0, 0, true);
+    drivebase.drive(0, 0, 0, false);
   }
 
   // Returns true when the command should end.
