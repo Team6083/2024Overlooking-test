@@ -96,6 +96,11 @@ public class AprilTag extends SubsystemBase {
         return bt;
     }
 
+    public double[] getCT(){
+        ct = table.getEntry("camerapose_targetspace").getDoubleArray(new double[6]);
+        return ct;
+    }
+
     public void putDashboard() {
         // SmartDashboard.putNumber("hasTarget", getTv());
         SmartDashboard.putNumber("LimelightX", getTx());
@@ -110,9 +115,9 @@ public class AprilTag extends SubsystemBase {
         SmartDashboard.putNumber("bt_z", getBT()[2]);
 
         // campose in targetspace
-        // SmartDashboard.putNumber("ct_x", getCT()[0]);
-        // SmartDashboard.putNumber("ct_y", getCT()[1]);
-        // SmartDashboard.putNumber("ct_z", getCT()[2]);
+        SmartDashboard.putNumber("ct_x", getCT()[0]);
+        SmartDashboard.putNumber("ct_y", getCT()[1]);
+        SmartDashboard.putNumber("ct_z", getCT()[2]);
 
         SmartDashboard.putNumber("MyDistance", getMyDistance());
     }

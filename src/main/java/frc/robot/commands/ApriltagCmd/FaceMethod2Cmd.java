@@ -7,7 +7,6 @@ package frc.robot.commands.ApriltagCmd;
 // import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Drivebase;
-import frc.robot.subsystems.AprilTag;
 
 public class FaceMethod2Cmd extends Command {
   /** Creates a new FixDistanceCmd. */
@@ -28,7 +27,7 @@ public class FaceMethod2Cmd extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    drivebase.faceTargetMethod2();
+    drivebase.faceTarget();
   }
 
   // Called once the command ends or is interrupted.

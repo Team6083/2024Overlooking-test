@@ -48,7 +48,7 @@ public class Drivebase extends SubsystemBase {
   private final double kD = 0;
 
   // fix distance value not determined yet
-  private final double kfP = 0.15;
+  private final double kfP = 0.8;
   private final double kfI = 0;
   private final double kfD = 0.006;
 
@@ -112,6 +112,9 @@ backRight = new SwerveModule(DrivebaseConstants.kBackRightDriveMotorChannel,
 
     // set the swerve speed equal 0
     drive(0, 0, 0, false);
+
+    follow_pid = new PIDController(kfP, kfI, kfD);
+    pid = new PIDController(kP, kI, kD);
   }
 
   public void setGyroReset() {
@@ -137,6 +140,9 @@ backRight = new SwerveModule(DrivebaseConstants.kBackRightDriveMotorChannel,
    *                      using the wpi function to set the speed of the swerve
    */
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
+    if(trackingCondition){
+      rot = faceTargetMethod2();
+    }
     swerveModuleStates = kinematics.toSwerveModuleStates(
         fieldRelative
             ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getRotation2d())
@@ -159,36 +165,47 @@ backRight = new SwerveModule(DrivebaseConstants.kBackRightDriveMotorChannel,
     drive(0, 0, -rot, false);
   }
 
-  public void faceTargetMethod2() {
+  public double faceTargetMethod2() {
     double offset = tag.getTx();
     double hasTarget = tag.getTv();
-    pid = new PIDController(kP, kI, kD);
     double rot = 0;
     if (hasTarget == 1) {
-      rot = pid.calculate(offset, 0);
+      rot = -pid.calculate(offset, 0);
     }
     SmartDashboard.putNumber("rot", rot);
-    drive(0, 0, -rot, false);
+    return rot;
   }
 
-  public void FixDistance() {
-    double x_dis = tag.getBT()[2];
+  public void fixDistanceBT() {
+    double[] bt = tag.getBT(); 
+    double x_dis = bt[0];
+    double y_dis = bt[1];
     double hasTarget = tag.getTv();
-    double speed = 0;
-    follow_pid = new PIDController(kfP, kfI, kfD);
+    double xSpeed = 0;
+    double ySpeed = 0;
     if (hasTarget == 1) {
-      speed = follow_pid.calculate(-x_dis, 0.5);
+      xSpeed = follow_pid.calculate(x_dis, 0);
+      ySpeed = follow_pid.calculate(y_dis, 1);
     }
-    SmartDashboard.putNumber("x_dis", x_dis);
-    drive(speed, 0, 0, false);
+    SmartDashboard.putNumber("x_dis_speed", xSpeed);
+    SmartDashboard.putNumber("y_dis_speed", ySpeed);
+    drive(xSpeed, 0, 0, true);
   }
 
-  public void trackingDrive(double tx, double speed) {
-    double tanValue = tx / 20;
-    swerveModuleStates = kinematics.toSwerveModuleStates(new ChassisSpeeds(0.5 * tanValue, 0.5, 0));
-    SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, DrivebaseConstants.kMaxSpeed);
-    Rotation2d angle = swerveModuleStates[0].angle;
-    frontLeft.setDesiredState(new SwerveModuleState(speed, angle));
+  public void fixDistanceCT(){
+    double[] ct = tag.getCT();
+    double x_dis = ct[0];
+    double y_dis = ct[1];
+    double hasTarget = tag.getTv();
+    double xSpeed = 0;
+    double ySpeed = 0;
+    if(hasTarget == 1){
+      xSpeed = follow_pid.calculate(x_dis, 0);
+      ySpeed = follow_pid.calculate(y_dis, 1);
+    }
+    SmartDashboard.putNumber("x_dis_speed", xSpeed);
+    SmartDashboard.putNumber("y_dis_speed", ySpeed);
+    drive(xSpeed, 0, 0, true);
   }
 
   public void Go_To_45_Angle() {
@@ -249,6 +266,7 @@ backRight = new SwerveModule(DrivebaseConstants.kBackRightDriveMotorChannel,
     SmartDashboard.putNumber("backLeft_speed", swerveModuleStates[2].speedMetersPerSecond);
     SmartDashboard.putNumber("backRight_speed", swerveModuleStates[3].speedMetersPerSecond);
     SmartDashboard.putNumber("gyro_heading", getRotation2d().getDegrees() % 360.0);
+    SmartDashboard.putBoolean("trackingCondition", trackingCondition);
   }
 
   @Override
