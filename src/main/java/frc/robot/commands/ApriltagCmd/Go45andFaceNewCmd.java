@@ -16,6 +16,6 @@ public class Go45andFaceNewCmd extends SequentialCommandGroup {
   public Go45andFaceNewCmd(Drivebase drivebase) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    addCommands(new Go45andFaceNewCmd(drivebase).withTimeout(2), new FaceTag(drivebase).withTimeout(0.5));
+    addCommands(new GoTo45PositionCmd(drivebase).withTimeout(2), new FaceTag(drivebase).withTimeout(0.5));
   }
 }
