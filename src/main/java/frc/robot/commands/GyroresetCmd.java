@@ -5,7 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Drivebase;
+import frc.robot.subsystems.drive.Drivebase;
 
 public class GyroresetCmd extends Command {
   /** Creates a new GyroresetCmd. */

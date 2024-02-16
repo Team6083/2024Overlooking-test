@@ -6,7 +6,7 @@ package frc.robot.commands.ApriltagCmd;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.AprilTag;
-import frc.robot.subsystems.Drivebase;
+import frc.robot.subsystems.drive.Drivebase;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:

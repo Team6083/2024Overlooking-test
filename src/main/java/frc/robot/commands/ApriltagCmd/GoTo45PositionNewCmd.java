@@ -6,7 +6,7 @@ package frc.robot.commands.ApriltagCmd;
 
 // import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Drivebase;
+import frc.robot.subsystems.drive.Drivebase;
 
 public class GoTo45PositionNewCmd extends Command {
   /** Creates a new FixDistanceCmd. */

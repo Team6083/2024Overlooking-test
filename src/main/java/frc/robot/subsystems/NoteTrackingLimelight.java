@@ -9,7 +9,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class VisionTrackingLimelight extends SubsystemBase {
+public class NoteTrackingLimelight extends SubsystemBase {
   /** Creates a new visionTracking. */
 
   private final NetworkTable table;
@@ -18,7 +18,7 @@ public class VisionTrackingLimelight extends SubsystemBase {
   private double ty = 0.0;
   private double ta = 0.0;
 
-  public VisionTrackingLimelight() {
+  public NoteTrackingLimelight() {
     table = NetworkTableInstance.getDefault().getTable("limelight");
     setCamMode(1);
     setLedMode(1);
