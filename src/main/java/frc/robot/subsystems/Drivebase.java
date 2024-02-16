@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -71,17 +72,17 @@ public class Drivebase extends SubsystemBase {
     backRightLocation = new Translation2d(-0.3, -0.3);
 
     frontLeft = new SwerveModule(DrivebaseConstants.kFrontLeftDriveMotorChannel,
-    DrivebaseConstants.kFrontLeftTurningMotorChannel, DrivebaseConstants.kFrontLeftTurningEncoderChannel,
-    DrivebaseConstants.kFrontLeftDriveMotorInverted, DrivebaseConstants.kFrontLeftCanCoderMagOffset);
-frontRight = new SwerveModule(DrivebaseConstants.kFrontRightDriveMotorChannel,
-    DrivebaseConstants.kFrontRightTurningMotorChannel, DrivebaseConstants.kFrontRightTurningEncoderChannel,
-    DrivebaseConstants.kFrontRightDriveMotorInverted, DrivebaseConstants.kFrontRightCanCoderMagOffset);
-backLeft = new SwerveModule(DrivebaseConstants.kBackLeftDriveMotorChannel,
-    DrivebaseConstants.kBackLeftTurningMotorChannel, DrivebaseConstants.kBackLeftTurningEncoderChannel,
-    DrivebaseConstants.kBackLeftDriveMotorInverted, DrivebaseConstants.kBackLeftCanCoderMagOffset);
-backRight = new SwerveModule(DrivebaseConstants.kBackRightDriveMotorChannel,
-    DrivebaseConstants.kBackRightTurningMotorChannel, DrivebaseConstants.kBackRightTurningEncoderChannel,
-    DrivebaseConstants.kBackRightDriveMotorInverted, DrivebaseConstants.kBackRightCanCoderMagOffset);
+        DrivebaseConstants.kFrontLeftTurningMotorChannel, DrivebaseConstants.kFrontLeftTurningEncoderChannel,
+        DrivebaseConstants.kFrontLeftDriveMotorInverted, DrivebaseConstants.kFrontLeftCanCoderMagOffset);
+    frontRight = new SwerveModule(DrivebaseConstants.kFrontRightDriveMotorChannel,
+        DrivebaseConstants.kFrontRightTurningMotorChannel, DrivebaseConstants.kFrontRightTurningEncoderChannel,
+        DrivebaseConstants.kFrontRightDriveMotorInverted, DrivebaseConstants.kFrontRightCanCoderMagOffset);
+    backLeft = new SwerveModule(DrivebaseConstants.kBackLeftDriveMotorChannel,
+        DrivebaseConstants.kBackLeftTurningMotorChannel, DrivebaseConstants.kBackLeftTurningEncoderChannel,
+        DrivebaseConstants.kBackLeftDriveMotorInverted, DrivebaseConstants.kBackLeftCanCoderMagOffset);
+    backRight = new SwerveModule(DrivebaseConstants.kBackRightDriveMotorChannel,
+        DrivebaseConstants.kBackRightTurningMotorChannel, DrivebaseConstants.kBackRightTurningEncoderChannel,
+        DrivebaseConstants.kBackRightDriveMotorInverted, DrivebaseConstants.kBackRightCanCoderMagOffset);
 
     // track = new VisionTrackingLimelight();
     tag = new AprilTag();
@@ -127,7 +128,6 @@ backRight = new SwerveModule(DrivebaseConstants.kBackRightDriveMotorChannel,
             : gyro.getRotation2d().getDegrees()));
   }
 
-
   /**
    * Method to drive the robot using joystick info.
    *
@@ -140,7 +140,7 @@ backRight = new SwerveModule(DrivebaseConstants.kBackRightDriveMotorChannel,
    *                      using the wpi function to set the speed of the swerve
    */
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
-    if(trackingCondition){
+    if (trackingCondition) {
       rot = faceTargetMethod2();
     }
     swerveModuleStates = kinematics.toSwerveModuleStates(
@@ -177,7 +177,7 @@ backRight = new SwerveModule(DrivebaseConstants.kBackRightDriveMotorChannel,
   }
 
   public void fixDistanceBT() {
-    double[] bt = tag.getBT(); 
+    double[] bt = tag.getBT();
     double x_dis = bt[0];
     double y_dis = bt[1];
     double hasTarget = tag.getTv();
@@ -192,14 +192,14 @@ backRight = new SwerveModule(DrivebaseConstants.kBackRightDriveMotorChannel,
     drive(xSpeed, 0, 0, true);
   }
 
-  public void fixDistanceCT(){
+  public void fixDistanceCT() {
     double[] ct = tag.getCT();
     double x_dis = ct[0];
     double y_dis = ct[1];
     double hasTarget = tag.getTv();
     double xSpeed = 0;
     double ySpeed = 0;
-    if(hasTarget == 1){
+    if (hasTarget == 1) {
       xSpeed = follow_pid.calculate(x_dis, 0);
       ySpeed = follow_pid.calculate(y_dis, 1);
     }
@@ -211,12 +211,33 @@ backRight = new SwerveModule(DrivebaseConstants.kBackRightDriveMotorChannel,
   public void Go_To_45_Angle() {
     double tan = Math.abs(tag.getBT()[0]) / Math.abs(tag.getBT()[2]);
     PID = new PIDController(kPP, kII, kDD);
-    double speed = 0;
+    double xSpeed = 0;
+    double ySpeed = 0;
     if (tag.getTv() == 1) {
-      speed = PID.calculate(tan, 1);
+      // xSpeed = PID.calculate(tan, 1);
+      // ySpeed = follow_pid.calcualte();
+
     }
     if (Math.abs(tan - 1) < 0.01) {
-      drive(speed, 0, 0, false);
+      drive(xSpeed, 0, 0, false);
+    }
+  }
+
+  public void Go_To_45_Angle_New() {
+    // double tan = Math.abs(tag.getBT()[0]) / Math.abs(tag.getBT()[2]);
+    double x_offset = tag.getBT()[0];
+    double z_offset = tag.getBT()[2];
+    PID = new PIDController(kPP, kII, kDD);
+    double xSpeed = 0;
+    double ySpeed = 0;
+    if (tag.getTv() == 1) {
+      xSpeed = PID.calculate(x_offset, 1);
+      ySpeed = follow_pid.calculate(z_offset, 1);
+    }
+    if (Math.abs(x_offset- 1) > 0.01&&Math.abs(ySpeed-1)>0.01) {
+      drive(xSpeed, ySpeed, 0, false);
+    } else{
+      drive(0, 0, 0, false);
     }
   }
 

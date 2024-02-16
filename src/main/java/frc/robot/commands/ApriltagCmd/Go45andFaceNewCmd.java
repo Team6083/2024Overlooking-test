@@ -11,11 +11,11 @@ import frc.robot.subsystems.Drivebase;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class Go45andFaceCmd extends SequentialCommandGroup {
+public class Go45andFaceNewCmd extends SequentialCommandGroup {
   /** Creates a new FollowCmd. */
-  public Go45andFaceCmd(Drivebase drivebase) {
+  public Go45andFaceNewCmd(Drivebase drivebase) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    addCommands(new Go45andFaceCmd(drivebase).withTimeout(2), new FaceTag(drivebase).withTimeout(0.5));
+    addCommands(new Go45andFaceNewCmd(drivebase).withTimeout(2), new FaceTag(drivebase).withTimeout(0.5));
   }
 }

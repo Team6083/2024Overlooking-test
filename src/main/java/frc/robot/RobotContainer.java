@@ -12,6 +12,7 @@ import frc.robot.commands.ApriltagCmd.FaceTag;
 import frc.robot.commands.ApriltagCmd.FixDistanceCmd;
 import frc.robot.commands.ApriltagCmd.FollowCmd;
 import frc.robot.commands.ApriltagCmd.Go45andFaceCmd;
+import frc.robot.commands.ApriltagCmd.Go45andFaceNewCmd;
 import frc.robot.commands.TrackingCmd.AddTrackingError;
 import frc.robot.commands.TrackingCmd.MinusTrackingError;
 import frc.robot.commands.TrackingCmd.SwitchTrackConditionCmd;
@@ -71,12 +72,12 @@ public class RobotContainer {
     drivebase = new Drivebase();
     drivebase.setDefaultCommand(new SwerveJoystickCmd(drivebase, driverController));
 
-    // driverController.a().toggleOnTrue(new FaceTag(drivebase));
+    driverController.a().toggleOnTrue(new FaceTag(drivebase));
     driverController.b().toggleOnTrue(new FixDistanceCmd(drivebase));
-    // driverController.y().toggleOnTrue(new FollowCmd(drivebase));
-  // driverController.back().toggleOnTrue(new FaceMethod2Cmd(drivebase));
+    driverController.y().toggleOnTrue(new FollowCmd(drivebase));
+    driverController.back().toggleOnTrue(new FaceMethod2Cmd(drivebase));
     driverController.x().onTrue(new SwitchTrackConditionCmd(drivebase));
-    // driverController.pov(45).toggleOnFalse(new Go45andFaceCmd(drivebase)); // wonder if we should use on true
+    driverController.pov(45).toggleOnFalse(new Go45andFaceNewCmd(drivebase)); // wonder if we should use on true
     // driverController.pov(90).onTrue(new AddTrackingError(drivetain));
     // driverController.pov(270).onTrue(new MinusTrackingError(drivetain));
   }
