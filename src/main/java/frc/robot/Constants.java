@@ -41,10 +41,10 @@ public final class Constants {
     public static final int kBackRightTurningEncoderChannel = 3;
 
     // can coder magnet offset value
-    public static final double kFrontLeftCanCoderMagOffset = -0.082031;
-    public static final double kFrontRightCanCoderMagOffset = -0.458984;
-    public static final double kBackLeftCanCoderMagOffset = 0.350098;
-    public static final double kBackRightCanCoderMagOffset = -0.342529;
+    public static final double kFrontLeftCanCoderMagOffset = -0.060303 ;
+    public static final double kFrontRightCanCoderMagOffset = -0.458984 ;
+    public static final double kBackLeftCanCoderMagOffset = 0.357666 ;
+    public static final double kBackRightCanCoderMagOffset = -0.347900 ;
 
     public static final double kMaxSpeed = 3; // 7 meters per second
     public static final double kMinSpeed = 0.25;
