@@ -4,16 +4,19 @@
 
 package frc.robot.commands.ApriltagCmd;
 
+// import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.drive.Drivebase;
 
-public class FaceTag extends Command {
-  /** Creates a new FaceTag. */
+public class FollowNewCmd extends Command {
+  /** Creates a new FixDistanceCmd. */
   private final Drivebase drivebase;
-  public FaceTag(Drivebase drivebase) {
+
+  public FollowNewCmd(Drivebase drivebase) {
+    // this.tag = tag;
     this.drivebase = drivebase;
+    addRequirements(drivebase);
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(this.drivebase);
   }
 
   // Called when the command is initially scheduled.
@@ -24,7 +27,7 @@ public class FaceTag extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-  drivebase.faceTarget();
+    drivebase.follow();
   }
 
   // Called once the command ends or is interrupted.
