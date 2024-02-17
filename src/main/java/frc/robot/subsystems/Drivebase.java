@@ -142,7 +142,7 @@ public class Drivebase extends SubsystemBase {
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
     if (trackingCondition) {
       rot = faceTargetMethod2();
-    }
+    }    
     swerveModuleStates = kinematics.toSwerveModuleStates(
         fieldRelative
             ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getRotation2d())
