@@ -94,12 +94,12 @@ public class TagTrackingPhotovision extends SubsystemBase {
 
     public void periodic() {
         // This method will be called once per scheduler run
-        List<Pose2d> notes = getTags();
-        SmartDashboard.putNumber("noteVision/nFound", notes.size());
-        if (notes.size() > 0) {
-            Pose2d p = notes.get(0);
-            SmartDashboard.putNumber("noteVision/x", p.getX());
-            SmartDashboard.putNumber("noteVision/y", p.getY());
+        List<Pose2d> tags = getTags();
+        SmartDashboard.putNumber("tagVision/nFound", tags.size());
+        if (tags.size() > 0) {
+            Pose2d p = tags.get(0);
+            SmartDashboard.putNumber("tagVision/x", p.getX());
+            SmartDashboard.putNumber("tagVision/y", p.getY());
         }
     }
 }
