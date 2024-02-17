@@ -280,6 +280,15 @@ public class Drivebase extends SubsystemBase {
     }
   }
 
+  public void Keep_45_Angle(){
+    double offset = tag.getTlong()/tag.getTshort();
+    PID = new PIDController(kPP, kII, kDD);
+    double speed = 0;
+    if(tag.getTv()==1){
+      speed = PID.calculate(offset, 1.414);
+    }
+  }
+
   public void switchTrackCondition() {
     trackingCondition = !trackingCondition;
   }
