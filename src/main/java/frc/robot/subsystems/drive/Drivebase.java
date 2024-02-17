@@ -287,6 +287,7 @@ public class Drivebase extends SubsystemBase {
     if(tag.getTv()==1){
       speed = PID.calculate(offset, 1.414);
     }
+    drive(0, 0, speed, false);
   }
 
   public void switchTrackCondition() {
