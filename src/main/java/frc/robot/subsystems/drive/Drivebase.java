@@ -5,10 +5,7 @@
 package frc.robot.subsystems.drive;
 
 import com.kauailabs.navx.frc.AHRS;
-
-import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -21,6 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DrivebaseConstants;
 import frc.robot.subsystems.AprilTag;
+import frc.robot.subsystems.NoteTracking.NoteTrackingPhotovision;
 
 public class Drivebase extends SubsystemBase {
   /** Creates a new Drivetain. */
@@ -33,8 +31,6 @@ public class Drivebase extends SubsystemBase {
   private final SwerveModule frontRight;
   private final SwerveModule backLeft;
   private final SwerveModule backRight;
-
-  // private final VisionTrackingLimelight track;
 
   private final SwerveDriveKinematics kinematics;
   private final SwerveDriveOdometry odometry;
@@ -64,7 +60,9 @@ public class Drivebase extends SubsystemBase {
 
   private Boolean trackingCondition = false;
 
+  private NoteTrackingPhotovision note;
   private AprilTag tag;
+
   private SwerveModuleState[] swerveModuleStates = new SwerveModuleState[4];
 
   public Drivebase() {
@@ -86,7 +84,6 @@ public class Drivebase extends SubsystemBase {
         DrivebaseConstants.kBackRightTurningMotorChannel, DrivebaseConstants.kBackRightTurningEncoderChannel,
         DrivebaseConstants.kBackRightDriveMotorInverted, DrivebaseConstants.kBackRightCanCoderMagOffset);
 
-    // track = new VisionTrackingLimelight();
     tag = new AprilTag();
 
     SmartDashboard.putData("frontLeft", frontLeft);

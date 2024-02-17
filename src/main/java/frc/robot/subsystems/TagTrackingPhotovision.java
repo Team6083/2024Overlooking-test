@@ -100,6 +100,7 @@ public class TagTrackingPhotovision extends SubsystemBase {
             field.getObject(label).setPose(pose);
     }
 
+    @Override
     public void periodic() {
         // This method will be called once per scheduler run
         List<Pose2d> tags = getTags();

@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import org.photonvision.PhotonCamera;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
  * numerical or boolean
@@ -41,10 +43,10 @@ public final class Constants {
     public static final int kBackRightTurningEncoderChannel = 3;
 
     // can coder magnet offset value
-    public static final double kFrontLeftCanCoderMagOffset = -0.060303 ;
-    public static final double kFrontRightCanCoderMagOffset = -0.458984 ;
-    public static final double kBackLeftCanCoderMagOffset = 0.357666 ;
-    public static final double kBackRightCanCoderMagOffset = -0.347900 ;
+    public static final double kFrontLeftCanCoderMagOffset = -0.060303;
+    public static final double kFrontRightCanCoderMagOffset = -0.458984;
+    public static final double kBackLeftCanCoderMagOffset = 0.357666;
+    public static final double kBackRightCanCoderMagOffset = -0.347900;
 
     public static final double kMaxSpeed = 3; // 7 meters per second
     public static final double kMinSpeed = 0.25;
@@ -86,6 +88,15 @@ public final class Constants {
     public static final double kPRotController = kMaxModuleTuringVoltage / kMaxSpeedTurningDegree;
     public static final double kIRotController = 0.0;
     public static final double kDRotController = 0.0004;
+  }
+
+  public static final class NoteTrackingConstants {
+    public static final String cameraName = "Microsoft_LifeCam_HD-3000";
+    public static final int noteTrakingPipeline = 1;
+    public static final double cameraHeight = 0.36;
+    public static final double cameraWeight = 0.0;
+    public static final double pitchDegree = -20.0;
+    public static final double yawDegree = 0;
   }
 
   public static final class AprilTagConstants {
