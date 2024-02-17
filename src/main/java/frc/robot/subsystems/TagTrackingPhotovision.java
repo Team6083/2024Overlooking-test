@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -21,9 +22,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class TagTrackingPhotovision extends SubsystemBase {
-  /** Creates a new VisionTrackingPhotovision. */
+    /** Creates a new VisionTrackingPhotovision. */
 
-  private final boolean tag = true;
+    private final boolean tag = true;
     private final String cameraName = "Microsoft_LifeCam_HD-3000";
     private final PhotonCamera tagCamera;
     private final Transform3d tagCamPosition = new Transform3d(
@@ -35,6 +36,7 @@ public class TagTrackingPhotovision extends SubsystemBase {
     public final double pitchDegree = 0;
     public final double yawDegree = 0;
 
+    public double distance;
 
     public TagTrackingPhotovision() {
         tagCamera = new PhotonCamera(cameraName);
@@ -61,14 +63,20 @@ public class TagTrackingPhotovision extends SubsystemBase {
             // this calc assumes pitch angle is positive UP, so flip the camera's pitch
             // note that PV target angles are in degrees
             // double d = Math.abs(noteCamPosition.getZ() /
-            //         Math.tan(-noteCamPosition.getRotation().getY() + Math.toRadians(trackedTarget.getPitch())));
+            // Math.tan(-noteCamPosition.getRotation().getY() +
+            // Math.toRadians(trackedTarget.getPitch())));
             // double yaw = Math.toRadians(trackedTarget.getYaw());
             // double x = d * Math.cos(yaw);
             // double y = d * Math.sin(yaw);
             double pitch = trackedTarget.getPitch();
             double yaw = trackedTarget.getYaw();
-            double y = cameraHeight*(1/Math.tan(Math.toRadians(pitch-pitchDegree)));
-            double x = y*Math.tan(Math.toRadians(yaw-yawDegree))+cameraWeight;
+            double y = cameraHeight * (1 / Math.tan(Math.toRadians(pitch - pitchDegree)));
+            double x = y * Math.tan(Math.toRadians(yaw - yawDegree)) + cameraWeight;
+            distance = PhotonUtils.calculateDistanceToTargetMeters(
+                    cameraHeight,
+                    y,
+                    Math.toRadians(pitch),
+                    Units.degreesToRadians(results.getBestTarget().getPitch()));
             poses.add(new Pose2d(x, y, new Rotation2d(0)));
         }
         return poses;
