@@ -23,6 +23,9 @@ public class AprilTag extends SubsystemBase {
     public NetworkTableEntry TR;
     public NetworkTableEntry CT;
 
+    public NetworkTableEntry tlong;
+    public NetworkTableEntry tshort;
+
     public double v;
     public double a;
     public double x;
@@ -30,6 +33,8 @@ public class AprilTag extends SubsystemBase {
     public double area;
     public double ID;
     public double latency;
+    public double tagLong;
+    public double tagShort;
 
     public double[] bt; // botpose_targetspace
     public double[] cr;// camerapose_robotspace
@@ -100,6 +105,16 @@ public class AprilTag extends SubsystemBase {
     public double[] getCT() {
         ct = table.getEntry("camerapose_targetspace").getDoubleArray(new double[6]);
         return ct;
+    }
+
+    public double getTlong(){
+        tagLong = table.getEntry("tlong").getDouble(0);
+        return tagLong;
+    }
+
+    public double getTshort(){
+        tagShort = table. getEntry("tshort").getDouble(0);
+        return tagShort;
     }
 
     // public void updatePoseEstimatorWithVisionBotPose() {
