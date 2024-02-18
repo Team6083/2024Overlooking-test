@@ -1,7 +1,6 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.ApriltagTracking;
 
 import edu.wpi.first.math.VecBuilder;
-// import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -9,7 +8,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 // import frc.robot.Constants.AprilTagConstants;
 
-public class AprilTag extends SubsystemBase {
+public class TagTrackingLimelight extends SubsystemBase {
     public NetworkTable table;
     public NetworkTableEntry tx;// = table.getEntry("tx");// table.getEntry("tx");
     public NetworkTableEntry ty;// = table.getEntry("ty");
@@ -50,7 +49,7 @@ public class AprilTag extends SubsystemBase {
     public double angleToGoalRadians;
     public double goalHeightInches;
 
-    public AprilTag() {
+    public TagTrackingLimelight() {
         table = NetworkTableInstance.getDefault().getTable("limelight");
 
     }

@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DrivebaseConstants;
-import frc.robot.subsystems.AprilTag;
+import frc.robot.subsystems.ApriltagTracking.TagTrackingLimelight;
 import frc.robot.subsystems.NoteTracking.NoteTrackingPhotovision;
 
 public class Drivebase extends SubsystemBase {
@@ -37,9 +37,10 @@ public class Drivebase extends SubsystemBase {
 
   private final AHRS gyro;
 
-  private PIDController pid;
-  private PIDController follow_pid;
-  public static PIDController PID;
+  private PIDController facingNotePID;
+  private PIDController facingTagPID;
+  private PIDController followingTagPID;
+  public PIDController faceToSpecificAnglePID;
 
   // face method value maybe correct
   private final double kP = 0.08;
@@ -61,7 +62,7 @@ public class Drivebase extends SubsystemBase {
   private Boolean trackingCondition = false;
 
   private NoteTrackingPhotovision note;
-  private AprilTag tag;
+  private TagTrackingLimelight tag;
 
   private SwerveModuleState[] swerveModuleStates = new SwerveModuleState[4];
 
@@ -84,7 +85,7 @@ public class Drivebase extends SubsystemBase {
         DrivebaseConstants.kBackRightTurningMotorChannel, DrivebaseConstants.kBackRightTurningEncoderChannel,
         DrivebaseConstants.kBackRightDriveMotorInverted, DrivebaseConstants.kBackRightCanCoderMagOffset);
 
-    tag = new AprilTag();
+    tag = new TagTrackingLimelight();
 
     SmartDashboard.putData("frontLeft", frontLeft);
     SmartDashboard.putData("frontRight", frontRight);
@@ -99,7 +100,7 @@ public class Drivebase extends SubsystemBase {
     // create the odometry
     odometry = new SwerveDriveOdometry(
         kinematics,
-        getRotation2d(),
+        gyroRotation2d(),
         new SwerveModulePosition[] {
             frontLeft.getPosition(),
             frontRight.getPosition(),
@@ -113,15 +114,16 @@ public class Drivebase extends SubsystemBase {
     // set the swerve speed equal 0
     drive(0, 0, 0, false);
 
-    follow_pid = new PIDController(kfP, kfI, kfD);
-    pid = new PIDController(kP, kI, kD);
+    facingNotePID = new PIDController(kP, kI, kD);
+    followingTagPID = new PIDController(kfP, kfI, kfD);
+    facingTagPID = new PIDController(kP, kI, kD);
   }
 
   public void setGyroReset() {
     gyro.reset();
   }
 
-  public Rotation2d getRotation2d() {
+  public Rotation2d gyroRotation2d() {
     return Rotation2d.fromDegrees(DrivebaseConstants.kGyroOffSet
         + ((DrivebaseConstants.kGyroInverted) ? (360.0 - gyro.getRotation2d().getDegrees())
             : gyro.getRotation2d().getDegrees()));
@@ -141,10 +143,10 @@ public class Drivebase extends SubsystemBase {
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
     if (trackingCondition) {
       rot = faceTargetMethod2();
-    }    
+    }
     swerveModuleStates = kinematics.toSwerveModuleStates(
         fieldRelative
-            ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getRotation2d())
+            ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, gyroRotation2d())
             : new ChassisSpeeds(xSpeed, ySpeed, rot));
     SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, DrivebaseConstants.kMaxSpeed);
     frontLeft.setDesiredState(swerveModuleStates[0]);
@@ -153,13 +155,36 @@ public class Drivebase extends SubsystemBase {
     backRight.setDesiredState(swerveModuleStates[3]);
   }
 
+  public double facingNoteRot(double currentRot){
+    var target = note.getNotes();
+    if(target.size()>0){
+      var pose = target.get(0);
+      double rot = -facingNotePID.calculate(pose.getX(), 0);
+      return rot;
+    }else{
+      return currentRot;
+    }
+  }
+
+  public double[] followingNoteSpeed(){
+    var target = note.getNotes();
+    double[] speed = new double[3];
+    speed[0] = 0; speed[1] = 0; speed[2] = 0;
+    if(target.size()>0){
+      var pose = target.get(0);
+      double rot = -facingNotePID.calculate(pose.getX(), 0);
+      return rot;
+    }else{
+      return speed;
+    }
+  }
+
   public void faceTarget() {
     double offset = tag.getTx();
     double hasTarget = tag.getTv();
-    pid = new PIDController(kP, kI, kD);
     double rot = 0;
     if (hasTarget == 1) {
-      rot = pid.calculate(offset, 0);
+      rot = facingTagPID.calculate(offset, 0);
     }
     drive(0, 0, -rot, false);
   }
@@ -169,7 +194,7 @@ public class Drivebase extends SubsystemBase {
     double hasTarget = tag.getTv();
     double rot = 0;
     if (hasTarget == 1) {
-      rot = -pid.calculate(offset, 0);
+      rot = -facingTagPID.calculate(offset, 0);
     }
     SmartDashboard.putNumber("rot", rot);
     return rot;
@@ -178,10 +203,9 @@ public class Drivebase extends SubsystemBase {
   public void follow() {
     double offset = tag.getTx();
     double hasTarget = tag.getTv();
-    pid = new PIDController(kP, kI, kD);
     double rot = 0;
     if (hasTarget == 1) {
-      rot = pid.calculate(offset, 0);
+      rot = facingTagPID.calculate(offset, 0);
     }
     double[] bt = tag.getBT();
     double x_dis = bt[2];
@@ -190,7 +214,7 @@ public class Drivebase extends SubsystemBase {
     double xSpeed = 0;
     // double ySpeed = 0;
     if (hasTarget == 1) {
-      xSpeed = -follow_pid.calculate(x_dis, 0.5);
+      xSpeed = -followingTagPID.calculate(x_dis, 0.5);
       // ySpeed = follow_pid.calculate(y_dis, 1);
     }
     SmartDashboard.putNumber("x_dis_speed", xSpeed);
@@ -208,8 +232,8 @@ public class Drivebase extends SubsystemBase {
     double xSpeed = 0;
     double ySpeed = 0;
     if (hasTarget == 1) {
-      xSpeed = follow_pid.calculate(x_dis, 0);
-      ySpeed = follow_pid.calculate(y_dis, 1);
+      xSpeed = followingTagPID.calculate(x_dis, 0);
+      ySpeed = followingTagPID.calculate(y_dis, 1);
     }
     SmartDashboard.putNumber("x_dis_speed", xSpeed);
     SmartDashboard.putNumber("y_dis_speed", ySpeed);
@@ -224,8 +248,8 @@ public class Drivebase extends SubsystemBase {
     double xSpeed = 0;
     double ySpeed = 0;
     if (hasTarget == 1) {
-      xSpeed = follow_pid.calculate(x_dis, 0);
-      ySpeed = follow_pid.calculate(y_dis, 1);
+      xSpeed = followingTagPID.calculate(x_dis, 0);
+      ySpeed = followingTagPID.calculate(y_dis, 1);
     }
     SmartDashboard.putNumber("x_dis_speed", xSpeed);
     SmartDashboard.putNumber("y_dis_speed", ySpeed);
@@ -234,7 +258,7 @@ public class Drivebase extends SubsystemBase {
 
   public void Go_To_45_Angle() {
     double tan = Math.abs(tag.getBT()[0]) / Math.abs(tag.getBT()[2]);
-    PID = new PIDController(kPP, kII, kDD);
+    faceToSpecificAnglePID = new PIDController(kPP, kII, kDD);
     double xSpeed = 0;
     double ySpeed = 0;
     if (tag.getTv() == 1) {
@@ -251,12 +275,12 @@ public class Drivebase extends SubsystemBase {
     // double tan = Math.abs(tag.getBT()[0]) / Math.abs(tag.getBT()[2]);
     double x_offset = tag.getBT()[0];
     double z_offset = tag.getBT()[2];
-    PID = new PIDController(kPP, kII, kDD);
+    faceToSpecificAnglePID = new PIDController(kPP, kII, kDD);
     double xSpeed = 0;
     double ySpeed = 0;
     if (tag.getTv() == 1) {
-      xSpeed = PID.calculate(x_offset, 1);
-      ySpeed = follow_pid.calculate(z_offset, 1);
+      xSpeed = faceToSpecificAnglePID.calculate(x_offset, 1);
+      ySpeed = followingTagPID.calculate(z_offset, 1);
     }
     if (Math.abs(x_offset - 1) > 0.01 && Math.abs(ySpeed - 1) > 0.01) {
       drive(xSpeed, ySpeed, 0, false);
@@ -267,22 +291,22 @@ public class Drivebase extends SubsystemBase {
 
   public void Go_To_30_Angle() {
     double tan = Math.abs(tag.getBT()[0]) / Math.abs(tag.getBT()[2]);
-    PID = new PIDController(kPP, kII, kDD);
+    faceToSpecificAnglePID = new PIDController(kPP, kII, kDD);
     double speed = 0;
     if (tag.getTv() == 1) {
-      speed = PID.calculate(tan, 0.3);
+      speed = faceToSpecificAnglePID.calculate(tan, 0.3);
     }
     if (Math.abs(tan - 1) < 0.01) {
       drive(speed, 0, 0, false);
     }
   }
 
-  public void Keep_45_Angle(){
-    double offset = tag.getTlong()/tag.getTshort();
-    PID = new PIDController(kPP, kII, kDD);
+  public void Keep_45_Angle() {
+    double offset = tag.getTlong() / tag.getTshort();
+    faceToSpecificAnglePID = new PIDController(kPP, kII, kDD);
     double speed = 0;
-    if(tag.getTv()==1){
-      speed = PID.calculate(offset, 1.414);
+    if (tag.getTv() == 1) {
+      speed = faceToSpecificAnglePID.calculate(offset, 1.414);
     }
     drive(0, 0, speed, false);
   }
@@ -306,7 +330,7 @@ public class Drivebase extends SubsystemBase {
   /** Updates the field relative position of the robot. */
   public void updateOdometry() {
     odometry.update(
-        getRotation2d(),
+        gyroRotation2d(),
         new SwerveModulePosition[] {
             frontLeft.getPosition(),
             frontRight.getPosition(),
@@ -320,7 +344,7 @@ public class Drivebase extends SubsystemBase {
     SmartDashboard.putNumber("frontRight_speed", swerveModuleStates[1].speedMetersPerSecond);
     SmartDashboard.putNumber("backLeft_speed", swerveModuleStates[2].speedMetersPerSecond);
     SmartDashboard.putNumber("backRight_speed", swerveModuleStates[3].speedMetersPerSecond);
-    SmartDashboard.putNumber("gyro_heading", getRotation2d().getDegrees() % 360.0);
+    SmartDashboard.putNumber("gyro_heading", gyroRotation2d().getDegrees() % 360.0);
     SmartDashboard.putBoolean("trackingCondition", trackingCondition);
   }
 
