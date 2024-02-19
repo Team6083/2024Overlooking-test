@@ -11,11 +11,17 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
+import com.pathplanner.lib.util.GeometryUtil;
+
+import edu.wpi.first.apriltag.AprilTagPoseEstimator;
+import edu.wpi.first.math.geometry.CoordinateSystem;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.proto.Geometry3D;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -61,13 +67,6 @@ public class TagTrackingPhotovision extends SubsystemBase {
 
         for (PhotonTrackedTarget trackedTarget : targets) {
             // this calc assumes pitch angle is positive UP, so flip the camera's pitch
-            // note that PV target angles are in degrees
-            // double d = Math.abs(noteCamPosition.getZ() /
-            // Math.tan(-noteCamPosition.getRotation().getY() +
-            // Math.toRadians(trackedTarget.getPitch())));
-            // double yaw = Math.toRadians(trackedTarget.getYaw());
-            // double x = d * Math.cos(yaw);
-            // double y = d * Math.sin(yaw);
             double pitch = trackedTarget.getPitch();
             double yaw = trackedTarget.getYaw();
             double y = cameraHeight * (1 / Math.tan(Math.toRadians(pitch - pitchDegree)));
@@ -99,6 +98,29 @@ public class TagTrackingPhotovision extends SubsystemBase {
         else
             field.getObject(label).setPose(pose);
     }
+
+    // not done yet
+    public Pose3d tagFieldPose3d() {
+        Pose3d tagPose3d = new Pose3d();
+        return tagPose3d;
+    }
+
+    // copy paste
+    // public void convertCoordinateSystem() {
+
+    //     Transform3d tagT3D = Geometry3D.Translation3d(tagTranslation['x'], tagTranslation['y'], tagTranslation['z']);
+    //     Rotation3d tagR3D = Geometry3D.Rotation3d(
+    //             Geometry3D.Quaternion(tagRotation['W'], tagRotation['X'], tagRotation['Y'], tagRotation['Z']));
+    //     Pose3d tagPose3D = Geometry3D.Pose3d(tagT3D, tagR3D);
+
+    //     Pose3d tagToCameraTransform = AprilTagPoseEstimator.estimate(tag);
+
+    //     Pose3d wpiTranslation = CoordinateSystem.convert(tagToCameraTransform.getTranslation().rotateBy(tagToCameraTransform.inverse().rotation()),
+    //     CoordinateSystem.EDN(),
+    //     CoordinateSystem.NWU());
+
+    //     // Pose3d cameraPose = tagPose3D.transformBy(wpiTransform.inverse());
+    // }
 
     @Override
     public void periodic() {
