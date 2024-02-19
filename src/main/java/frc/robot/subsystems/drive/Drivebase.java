@@ -172,11 +172,15 @@ public class Drivebase extends SubsystemBase {
     speed[0] = 0; speed[1] = 0; speed[2] = 0;
     if(target.size()>0){
       var pose = target.get(0);
+      double xSpeed = facingNotePID.calculate(pose.getY(), 0.2);
+      double ySpeed = 0;
       double rot = -facingNotePID.calculate(pose.getX(), 0);
-      return rot;
-    }else{
-      return speed;
+      // return rot;
+      speed[0] = xSpeed;
+      speed[1] = ySpeed;
+      speed[2] = rot;
     }
+    return speed;
   }
 
   public void faceTarget() {
