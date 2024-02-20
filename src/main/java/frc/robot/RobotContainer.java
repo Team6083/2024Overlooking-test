@@ -38,8 +38,8 @@ public class RobotContainer {
   Drivebase drivebase;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandXboxController driverController = new CommandXboxController(
-      OperatorConstants.kDriverControllerPort);
+  private final CommandXboxController mainController = new CommandXboxController(
+      OperatorConstants.kMainControllerPort);
 
   private final PowerDistribution pd = new PowerDistribution();
 
@@ -69,21 +69,21 @@ public class RobotContainer {
   private void configureBindings() {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
     drivebase = new Drivebase();
-    drivebase.setDefaultCommand(new SwerveJoystickCmd(drivebase, driverController));
+    drivebase.setDefaultCommand(new SwerveJoystickCmd(drivebase, mainController));
 
-    driverController.a().toggleOnTrue(new FaceTag(drivebase));
-    driverController.b().toggleOnTrue(new FixDistanceCmd(drivebase));
-    driverController.y().toggleOnTrue(new FollowNewCmd(drivebase));
-    driverController.x().onTrue(new SwitchTrackConditionCmd(drivebase));
-    driverController.pov(45).toggleOnFalse(new Go45andFaceNewCmd(drivebase)); // wonder if we should use on true
-    driverController.pov(90).toggleOnTrue(new Keep45Cmd(drivebase));
+    mainController.a().toggleOnTrue(new FaceTag(drivebase));
+    mainController.b().toggleOnTrue(new FixDistanceCmd(drivebase));
+    mainController.y().toggleOnTrue(new FollowNewCmd(drivebase));
+    mainController.x().onTrue(new SwitchTrackConditionCmd(drivebase));
+    mainController.pov(45).toggleOnFalse(new Go45andFaceNewCmd(drivebase)); // wonder if we should use on true
+    mainController.pov(90).toggleOnTrue(new Keep45Cmd(drivebase));
     // driverController.pov(90).onTrue(new AddTrackingError(drivetain));
     // driverController.pov(270).onTrue(new MinusTrackingError(drivetain));
   }
 
   private void putDashboard() {
-    SmartDashboard.putNumber("xbox_leftX", driverController.getLeftX());
-    SmartDashboard.putNumber("xbox_leftY", driverController.getLeftY());
+    SmartDashboard.putNumber("xbox_leftX", mainController.getLeftX());
+    SmartDashboard.putNumber("xbox_leftY", mainController.getLeftY());
     SmartDashboard.putNumber("pd_voltage", pd.getVoltage());
   }
 

@@ -20,7 +20,7 @@ import org.photonvision.PhotonCamera;
  */
 public final class Constants {
   public static class OperatorConstants {
-    public static final int kDriverControllerPort = 0;
+    public static final int kMainControllerPort = 0;
   }
 
   public final class DrivebaseConstants {
