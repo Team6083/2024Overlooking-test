@@ -6,13 +6,19 @@ package frc.robot.subsystems.ApriltagTracking;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.PhotonUtils;
+import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import com.pathplanner.lib.util.GeometryUtil;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagPoseEstimator;
 import edu.wpi.first.math.geometry.CoordinateSystem;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -30,6 +36,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class TagTrackingPhotovision extends SubsystemBase {
     /** Creates a new VisionTrackingPhotovision. */
 
+    public AprilTagFieldLayout aprilTagFieldLayout;
+
     private final boolean tag = true;
     private final String cameraName = "Microsoft_LifeCam_HD-3000";
     private final PhotonCamera tagCamera;
@@ -42,12 +50,34 @@ public class TagTrackingPhotovision extends SubsystemBase {
     public final double pitchDegree = 0;
     public final double yawDegree = 0;
 
+    public PhotonPipelineResult results;
+    public Transform3d robotToCam;
+    // Construct PhotonPoseEstimator
+    public PhotonPoseEstimator photonPoseEstimator;
+
     public double distance;
+    public double yaw;
+    public double pitch;
+    public double x;
+    public double y;
+    public double ID;
 
     public TagTrackingPhotovision() {
         tagCamera = new PhotonCamera(cameraName);
         tagCamera.setPipelineIndex(0);
         tagCamera.setDriverMode(false);
+        robotToCam = new Transform3d(new Translation3d(0.5, 0.0, 0.5),
+                new Rotation3d(0, 0, 0));
+        // Cam mounted facing forward, half a metre forward of center, half a meter up
+        // Construct PhotonPoseEstimator
+        photonPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout,
+                PoseStrategy.CLOSEST_TO_REFERENCE_POSE, tagCamera, robotToCam);
+
+    }
+
+    public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Pose2d prevEstimatedRobotPose) {
+        photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
+        return photonPoseEstimator.update();
     }
 
     public List<Pose2d> getTags() {
@@ -55,30 +85,36 @@ public class TagTrackingPhotovision extends SubsystemBase {
 
         if (!tagCamera.isConnected()) {
             System.out.println("Camera not connected");
-            return poses; // why??
         }
 
-        var results = tagCamera.getLatestResult();
+        results = tagCamera.getLatestResult();
+
         if (!results.hasTargets()) {
             System.out.println("No target");
-            return poses;
         }
+
         List<PhotonTrackedTarget> targets = results.getTargets();
 
         for (PhotonTrackedTarget trackedTarget : targets) {
             // this calc assumes pitch angle is positive UP, so flip the camera's pitch
-            double pitch = trackedTarget.getPitch();
-            double yaw = trackedTarget.getYaw();
-            double y = cameraHeight * (1 / Math.tan(Math.toRadians(pitch - pitchDegree)));
-            double x = y * Math.tan(Math.toRadians(yaw - yawDegree)) + cameraWeight;
-            distance = PhotonUtils.calculateDistanceToTargetMeters(
-                    cameraHeight,
-                    y,
-                    Math.toRadians(pitch),
-                    Units.degreesToRadians(results.getBestTarget().getPitch()));
+            pitch = trackedTarget.getPitch();
+            yaw = trackedTarget.getYaw();
+            y = cameraHeight * (1 / Math.tan(Math.toRadians(pitch - pitchDegree)));
+            x = y * Math.tan(Math.toRadians(yaw - yawDegree)) + cameraWeight;
             poses.add(new Pose2d(x, y, new Rotation2d(0)));
         }
         return poses;
+    }
+
+    // not yet done
+    public double getDistance() {
+        // List<Double> distances = new ArrayList<Double>();
+        distance = PhotonUtils.calculateDistanceToTargetMeters(
+                cameraHeight,
+                y,
+                Math.toRadians(pitch),
+                Units.degreesToRadians(results.getBestTarget().getPitch()));
+        return distance;
     }
 
     public void clearTagSolutions(Field2d field) {
@@ -108,19 +144,42 @@ public class TagTrackingPhotovision extends SubsystemBase {
     // copy paste
     // public void convertCoordinateSystem() {
 
-    //     Transform3d tagT3D = Geometry3D.Translation3d(tagTranslation['x'], tagTranslation['y'], tagTranslation['z']);
-    //     Rotation3d tagR3D = Geometry3D.Rotation3d(
-    //             Geometry3D.Quaternion(tagRotation['W'], tagRotation['X'], tagRotation['Y'], tagRotation['Z']));
-    //     Pose3d tagPose3D = Geometry3D.Pose3d(tagT3D, tagR3D);
+    // Transform3d tagT3D = Geometry3D.Translation3d(tagTranslation['x'],
+    // tagTranslation['y'], tagTranslation['z']);
+    // Rotation3d tagR3D = Geometry3D.Rotation3d(
+    // Geometry3D.Quaternion(tagRotation['W'], tagRotation['X'], tagRotation['Y'],
+    // tagRotation['Z']));
+    // Pose3d tagPose3D = Geometry3D.Pose3d(tagT3D, tagR3D);
 
-    //     Pose3d tagToCameraTransform = AprilTagPoseEstimator.estimate(tag);
+    // Pose3d tagToCameraTransform = AprilTagPoseEstimator.estimate(tag);
 
-    //     Pose3d wpiTranslation = CoordinateSystem.convert(tagToCameraTransform.getTranslation().rotateBy(tagToCameraTransform.inverse().rotation()),
-    //     CoordinateSystem.EDN(),
-    //     CoordinateSystem.NWU());
+    // Pose3d wpiTranslation =
+    // CoordinateSystem.convert(tagToCameraTransform.getTranslation().rotateBy(tagToCameraTransform.inverse().rotation()),
+    // CoordinateSystem.EDN(),
+    // CoordinateSystem.NWU());
 
-    //     // Pose3d cameraPose = tagPose3D.transformBy(wpiTransform.inverse());
+    // // Pose3d cameraPose = tagPose3D.transformBy(wpiTransform.inverse());
     // }
+
+    public double[] getTagInfo() {
+        results = tagCamera.getLatestResult();
+        double[] tagInfo = new double[2];
+        tagInfo[0] = 0;
+        tagInfo[1] = 0;
+        // if (results.hasTargets()) {
+        PhotonTrackedTarget target = results.getBestTarget();
+        ID = target.getFiducialId();
+        distance = PhotonUtils.calculateDistanceToTargetMeters(
+                cameraHeight,
+                cameraHeight * (1 / Math.tan(Math.toRadians(target.getPitch() - pitchDegree))),
+                Math.toRadians(target.getPitch()),
+                Units.degreesToRadians(results.getBestTarget().getPitch()));
+        // }
+        tagInfo[0] = results.hasTargets() ? ID : 0;
+        tagInfo[1] = results.hasTargets() ? distance : 0;
+        return tagInfo;
+
+    }
 
     @Override
     public void periodic() {
