@@ -44,7 +44,8 @@ public class Vision extends SubsystemBase {
 
         try {
             m_layout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2024Crescendo.m_resourceFile);
-        } catch (IOException err) {
+        } catch (IOException err) { 
+            //IOException is the base class for exceptions thrown while accessing information using streams, files and directories
             throw new RuntimeException();
         }
     }

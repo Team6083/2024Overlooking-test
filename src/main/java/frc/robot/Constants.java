@@ -105,4 +105,10 @@ public final class Constants {
     public static final double klimelightMountAngleDegrees = 0;
   }
 
+  public static final class AprilTagTrackingConstants{
+    public static final double[] kfollowingTagPID_X = {0.8, 0.0, 0.006};
+    public static final double[] kfollowingTagPID_Y = {0.8, 0, 0.006};
+    public static final double[] kfollowingTagPID_R = {0.8, 0, 0.006};
+  }
+
 }
