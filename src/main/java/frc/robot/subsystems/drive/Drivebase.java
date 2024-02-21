@@ -16,6 +16,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.AprilTagTrackingConstants;
 import frc.robot.Constants.DrivebaseConstants;
 import frc.robot.subsystems.ApriltagTracking.TagTrackingLimelight;
 import frc.robot.subsystems.NoteTracking.NoteTrackingPhotovision;
@@ -39,7 +40,11 @@ public class Drivebase extends SubsystemBase {
 
   private PIDController facingNotePID;
   private PIDController facingTagPID;
+  private PIDController followingTagPID_X;
+  private PIDController followingTagPID_Y;
+  private PIDController followingTagPID_R;
   private PIDController followingTagPID;
+
   public PIDController faceToSpecificAnglePID;
 
   // face method value maybe correct
@@ -47,12 +52,10 @@ public class Drivebase extends SubsystemBase {
   private final double kI = 0;
   private final double kD = 0;
 
-  // fix distance value not determined yet
-  private final double kfP = 0.8;
-  private final double kfI = 0;
-  private final double kfD = 0.006;
-
   // fix position
+  public static final double kfP = 0.3;
+  public static final double kfI = 0;
+  public static final double kfD = 0.006;  // fix position
   public static final double kPP = 0.03;
   public static final double kII = 0;
   public static final double kDD = 0;
@@ -116,6 +119,18 @@ public class Drivebase extends SubsystemBase {
 
     facingNotePID = new PIDController(kP, kI, kD);
     followingTagPID = new PIDController(kfP, kfI, kfD);
+    followingTagPID_X = new PIDController(
+        AprilTagTrackingConstants.kfollowingTagPID_X[0],
+        AprilTagTrackingConstants.kfollowingTagPID_X[1],
+        AprilTagTrackingConstants.kfollowingTagPID_X[2]);
+    followingTagPID_Y = new PIDController(
+        AprilTagTrackingConstants.kfollowingTagPID_Y[0],
+        AprilTagTrackingConstants.kfollowingTagPID_Y[1],
+        AprilTagTrackingConstants.kfollowingTagPID_Y[2]);
+    followingTagPID_R = new PIDController(
+        AprilTagTrackingConstants.kfollowingTagPID_R[0],
+        AprilTagTrackingConstants.kfollowingTagPID_R[1],
+        AprilTagTrackingConstants.kfollowingTagPID_R[2]);
     facingTagPID = new PIDController(kP, kI, kD);
   }
 
@@ -155,22 +170,24 @@ public class Drivebase extends SubsystemBase {
     backRight.setDesiredState(swerveModuleStates[3]);
   }
 
-  public double facingNoteRot(double currentRot){
+  public double facingNoteRot(double currentRot) {
     var target = note.getNotes();
-    if(target.size()>0){
+    if (target.size() > 0) {
       var pose = target.get(0);
       double rot = -facingNotePID.calculate(pose.getX(), 0);
       return rot;
-    }else{
+    } else {
       return currentRot;
     }
   }
 
-  public double[] followingNoteSpeed(){
+  public double[] followingNoteSpeed() {
     var target = note.getNotes();
     double[] speed = new double[3];
-    speed[0] = 0; speed[1] = 0; speed[2] = 0;
-    if(target.size()>0){
+    speed[0] = 0;
+    speed[1] = 0;
+    speed[2] = 0;
+    if (target.size() > 0) {
       var pose = target.get(0);
       double xSpeed = facingNotePID.calculate(pose.getY(), 0.2);
       double ySpeed = 0;
@@ -218,7 +235,7 @@ public class Drivebase extends SubsystemBase {
     double xSpeed = 0;
     // double ySpeed = 0;
     if (hasTarget == 1) {
-      xSpeed = -followingTagPID.calculate(x_dis, 0.5);
+      xSpeed = -followingTagPID_X.calculate(x_dis, 0.5);
       // ySpeed = follow_pid.calculate(y_dis, 1);
     }
     SmartDashboard.putNumber("x_dis_speed", xSpeed);
@@ -228,21 +245,36 @@ public class Drivebase extends SubsystemBase {
     // drive(0, 0, -rot, false);
   }
 
-  public void fixDistanceBT() {
-    double[] bt = tag.getBT();
-    double x_dis = bt[0];
-    double y_dis = bt[1];
-    double hasTarget = tag.getTv();
-    double xSpeed = 0;
-    double ySpeed = 0;
-    if (hasTarget == 1) {
-      xSpeed = followingTagPID.calculate(x_dis, 0);
-      ySpeed = followingTagPID.calculate(y_dis, 1);
+  public void follow2() {
+    double offset = tag.getTx();
+    double x_dis = tag.getMyDistance();
+    double y_dis = tag.getBT()[2];
+    // double hasTarget = tag.getTv();
+    if (tag.getTv() == 1) {
+      double xSpeed = -followingTagPID_X.calculate(x_dis, 0.5);
+      double ySpeed = followingTagPID_Y.calculate(y_dis, 1);
+      double rot = followingTagPID_R.calculate(offset, 0);
+      drive(xSpeed, ySpeed, -rot, false);
     }
-    SmartDashboard.putNumber("x_dis_speed", xSpeed);
-    SmartDashboard.putNumber("y_dis_speed", ySpeed);
-    drive(xSpeed, 0, 0, true);
+
+    SmartDashboard.putNumber("distance", tag.getMyDistance());
   }
+
+  // public void fixDistanceBT() {
+  // double[] bt = tag.getBT();
+  // double x_dis = bt[0];
+  // double y_dis = bt[1];
+  // double hasTarget = tag.getTv();
+  // double xSpeed = 0;
+  // double ySpeed = 0;
+  // if (hasTarget == 1) {
+  // xSpeed = followingTagPID.calculate(x_dis, 0);
+  // ySpeed = followingTagPID.calculate(y_dis, 1);
+  // }
+  // SmartDashboard.putNumber("x_dis_speed", xSpeed);
+  // SmartDashboard.putNumber("y_dis_speed", ySpeed);
+  // drive(xSpeed, 0, 0, true);
+  // }
 
   public void fixDistanceCT() {
     double[] ct = tag.getCT();
