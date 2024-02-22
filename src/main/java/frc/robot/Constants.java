@@ -99,16 +99,24 @@ public final class Constants {
     public static final double yawDegree = 0;
   }
 
+  /**
+   * Constants required in AprilTagSubsystem.
+   */
+
   public static final class AprilTagConstants {
     public static final int A_pipeline = 0;
+    /**
+     * limelight_offset = {x, y, angle}
+     */
+    public static final double[] limelight_offset = { 0.5, 0.45, 60.0 };
     public static final double klimelightLensHeightInches = 0;
     public static final double klimelightMountAngleDegrees = 0;
   }
 
-  public static final class AprilTagTrackingConstants{
-    public static final double[] kfollowingTagPID_X = {0.8, 0.0, 0.006};
-    public static final double[] kfollowingTagPID_Y = {0.8, 0, 0.006};
-    public static final double[] kfollowingTagPID_R = {0.8, 0, 0.006};
+  public static final class AprilTagTrackingConstants {
+    public static final double[] kfollowingTagPID_X = { 0.8, 0.0, 0.006 };
+    public static final double[] kfollowingTagPID_Y = { 0.8, 0, 0.006 };
+    public static final double[] kfollowingTagPID_R = { 0.8, 0, 0.006 };
   }
 
 }

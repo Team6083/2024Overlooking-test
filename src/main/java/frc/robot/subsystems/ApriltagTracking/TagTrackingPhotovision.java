@@ -178,7 +178,6 @@ public class TagTrackingPhotovision extends SubsystemBase {
         tagInfo[0] = results.hasTargets() ? ID : 0;
         tagInfo[1] = results.hasTargets() ? distance : 0;
         return tagInfo;
-
     }
 
     @Override

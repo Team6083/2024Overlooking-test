@@ -249,7 +249,6 @@ public class Drivebase extends SubsystemBase {
     double offset = tag.getTx();
     double x_dis = tag.getMyDistance();
     double y_dis = tag.getBT()[2];
-    // double hasTarget = tag.getTv();
     if (tag.getTv() == 1) {
       double xSpeed = followingTagPID_X.calculate(x_dis, 0.5);
       double ySpeed = followingTagPID_Y.calculate(y_dis, 0);

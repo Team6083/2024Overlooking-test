@@ -6,13 +6,13 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-// import frc.robot.Constants.AprilTagConstants;
+import frc.robot.Constants.AprilTagConstants;
 
 public class TagTrackingLimelight extends SubsystemBase {
     public NetworkTable table;
-    public NetworkTableEntry tx;// = table.getEntry("tx");// table.getEntry("tx");
-    public NetworkTableEntry ty;// = table.getEntry("ty");
-    public NetworkTableEntry ta;// = table.getEntry("ta");
+    public NetworkTableEntry tx;
+    public NetworkTableEntry ty;
+    public NetworkTableEntry ta;
     public NetworkTableEntry tv;
     public NetworkTableEntry tid;
     public NetworkTableEntry tl;
@@ -55,13 +55,12 @@ public class TagTrackingLimelight extends SubsystemBase {
     }
 
     public double getMyDistance() {
-        // readValue();
         double target_height = getBT()[1]; // botpose in targetspace y
         double x_dis = getBT()[0];
         double z_dis = getBT()[2];
         double hori_dis = Math.pow(Math.pow(x_dis, 2) + Math.pow(z_dis, 2), 1.0 / 2);
-        MyDistance = Math.pow(Math.pow(target_height, 2) + Math.pow(hori_dis, 2), 1.0
-                / 2);
+        MyDistance = Math.pow(Math.pow(target_height, 2) + Math.pow(hori_dis, 2),
+                1.0 / 2);
 
         return MyDistance;
     }
@@ -106,55 +105,56 @@ public class TagTrackingLimelight extends SubsystemBase {
         return ct;
     }
 
-    public double getTlong(){
+    public double getTlong() {
         tagLong = table.getEntry("tlong").getDouble(0);
         return tagLong;
     }
 
-    public double getTshort(){
-        tagShort = table. getEntry("tshort").getDouble(0);
+    public double getTshort() {
+        tagShort = table.getEntry("tshort").getDouble(0);
         return tagShort;
     }
 
     // public void updatePoseEstimatorWithVisionBotPose() {
-    //     PoseLatency visionBotPose = m_visionSystem.getPoseLatency();
-    //     // invalid LL data
-    //     if (visionBotPose.pose2d.getX() == 0.0) {
-    //         return;
-    //     }
+    // PoseLatency visionBotPose = m_visionSystem.getPoseLatency();
+    // // invalid LL data
+    // if (visionBotPose.pose2d.getX() == 0.0) {
+    // return;
+    // }
 
-    //     // distance from current pose to vision estimated pose
-    //     double poseDifference = m_poseEstimator.getEstimatedPosition().getTranslation()
-    //             .getDistance(visionBotPose.pose2d.getTranslation());
+    // // distance from current pose to vision estimated pose
+    // double poseDifference =
+    // m_poseEstimator.getEstimatedPosition().getTranslation()
+    // .getDistance(visionBotPose.pose2d.getTranslation());
 
-    //     if (m_visionSystem.areAnyTargetsValid()) {
-    //         double xyStds;
-    //         double degStds;
-    //         // multiple targets detected
-    //         if (m_visionSystem.getNumberOfTargetsVisible() >= 2) {
-    //             xyStds = 0.5;
-    //             degStds = 6;
-    //         }
-    //         // 1 target with large area and close to estimated pose
-    //         else if (m_visionSystem.getBestTargetArea() > 0.8 && poseDifference < 0.5) {
-    //             xyStds = 1.0;
-    //             degStds = 12;
-    //         }
-    //         // 1 target farther away and estimated pose is close
-    //         else if (m_visionSystem.getBestTargetArea() > 0.1 && poseDifference < 0.3) {
-    //             xyStds = 2.0;
-    //             degStds = 30;
-    //         }
-    //         // conditions don't match to add a vision measurement
-    //         else {
-    //             return;
-    //         }
+    // if (m_visionSystem.areAnyTargetsValid()) {
+    // double xyStds;
+    // double degStds;
+    // // multiple targets detected
+    // if (m_visionSystem.getNumberOfTargetsVisible() >= 2) {
+    // xyStds = 0.5;
+    // degStds = 6;
+    // }
+    // // 1 target with large area and close to estimated pose
+    // else if (m_visionSystem.getBestTargetArea() > 0.8 && poseDifference < 0.5) {
+    // xyStds = 1.0;
+    // degStds = 12;
+    // }
+    // // 1 target farther away and estimated pose is close
+    // else if (m_visionSystem.getBestTargetArea() > 0.1 && poseDifference < 0.3) {
+    // xyStds = 2.0;
+    // degStds = 30;
+    // }
+    // // conditions don't match to add a vision measurement
+    // else {
+    // return;
+    // }
 
-    //         m_poseEstimator.setVisionMeasurementStdDevs(
-    //                 VecBuilder.fill(xyStds, xyStds, Units.degreesToRadians(degStds)));
-    //         m_poseEstimator.addVisionMeasurement(visionBotPose.pose2d,
-    //                 Timer.getFPGATimestamp() - visionBotPose.latencySeconds);
-    //     }
+    // m_poseEstimator.setVisionMeasurementStdDevs(
+    // VecBuilder.fill(xyStds, xyStds, Units.degreesToRadians(degStds)));
+    // m_poseEstimator.addVisionMeasurement(visionBotPose.pose2d,
+    // Timer.getFPGATimestamp() - visionBotPose.latencySeconds);
+    // }
     // }
 
     public void putDashboard() {
