@@ -255,7 +255,7 @@ public class Drivebase extends SubsystemBase {
       double rot = -followingTagPID_R.calculate(offset, 0);
       drive(xSpeed, ySpeed, rot, false);
     }
-    SmartDashboard.putNumber("distance", tag.getMyDistance());
+    // SmartDashboard.putNumber("distance", tag.getMyDistance());
   }
 
   // public void fixDistanceBT() {
@@ -386,6 +386,7 @@ public class Drivebase extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     updateOdometry();
+   tag.putDashboard();
     putDashboard();
   }
 }
