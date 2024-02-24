@@ -54,6 +54,11 @@ public class TagTrackingLimelight extends SubsystemBase {
 
     }
 
+    /**
+     * Returns the distance between bot and tag.
+     * 
+     * @return distance
+     */
     public double getMyDistance() {
         double target_height = getBT()[1]; // botpose in targetspace y
         double x_dis = getBT()[0];
@@ -65,11 +70,21 @@ public class TagTrackingLimelight extends SubsystemBase {
         return MyDistance;
     }
 
+    /**
+     * Returns the x offset between the tag and crosshair.
+     * 
+     * @return x offset
+     */
     public double getTx() {
         x = table.getEntry("tx").getDouble(0);
         return x;
     }
 
+    /**
+     * Returns the y offset between the tag and crosshair.
+     * 
+     * @return y offset
+     */
     public double getTy() {
         y = table.getEntry("ty").getDouble(0);
         return y;
@@ -80,6 +95,11 @@ public class TagTrackingLimelight extends SubsystemBase {
         return a;
     }
 
+    /**
+     * Returns 1 if a tag is detected. 0 if none.
+     * 
+     * @return 0 or 1
+     */
     public double getTv() {
         v = table.getEntry("tv").getDouble(0);
         return v;
@@ -95,6 +115,15 @@ public class TagTrackingLimelight extends SubsystemBase {
         return latency;
     }
 
+    /**
+     * Returns a double array of botpose in target space. The former 3 refers to
+     * translation, while the latter 3 refers to rotation (in the sequence of pitch,
+     * yaw, roll) In target space, (0,0,0) is the centre of the tag, x+ points to
+     * the right side (when you're facing the tag), y+ points down, z+ points to
+     * front. 
+     * 
+     * @return x, y, z, pitch, yaw, roll
+     */
     public double[] getBT() {
         bt = table.getEntry("botpose_targetspace").getDoubleArray(new double[6]);
         return bt;

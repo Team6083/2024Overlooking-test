@@ -45,8 +45,8 @@ public class NoteTrackingPhotovision extends SubsystemBase {
         List<PhotonTrackedTarget> targets = results.getTargets();
 
         for (PhotonTrackedTarget trackedTarget : targets) {
-            double pitch = trackedTarget.getPitch();
-            double yaw = trackedTarget.getYaw();
+            double pitch = trackedTarget.getPitch(); // look down
+            double yaw = trackedTarget.getYaw(); // right and left
             double y = NoteTrackingConstants.cameraHeight
                     * (1 / Math.tan(Math.toRadians(pitch - NoteTrackingConstants.pitchDegree)));
             double x = y * Math.tan(Math.toRadians(yaw - NoteTrackingConstants.yawDegree))

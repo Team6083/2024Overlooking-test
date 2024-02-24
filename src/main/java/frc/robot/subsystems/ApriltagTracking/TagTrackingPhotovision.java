@@ -47,7 +47,7 @@ public class TagTrackingPhotovision extends SubsystemBase {
 
     public final double cameraHeight = 0.36;
     public final double cameraWeight = 0.0;
-    public final double pitchDegree = 0;
+    public final double pitchDegree = 15; // 90 - cam_offset
     public final double yawDegree = 0;
 
     public PhotonPipelineResult results;
@@ -75,10 +75,10 @@ public class TagTrackingPhotovision extends SubsystemBase {
 
     }
 
-    public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Pose3d prevEstimatedRobotPose) {
-        photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
-        return photonPoseEstimator.update();
-    }
+    // public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Pose3d prevEstimatedRobotPose) {
+    //     photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
+    //     return photonPoseEstimator.update();
+    // }
 
     public List<Pose2d> getTags() {
         List<Pose2d> poses = new ArrayList<Pose2d>();
@@ -178,6 +178,11 @@ public class TagTrackingPhotovision extends SubsystemBase {
         tagInfo[0] = results.hasTargets() ? ID : 0;
         tagInfo[1] = results.hasTargets() ? distance : 0;
         return tagInfo;
+    }
+
+    public void putDashboard(){
+        SmartDashboard.putNumber("distance", getTagInfo()[1]);
+        SmartDashboard.putNumber("ID", getTagInfo()[0]);
     }
 
     @Override
