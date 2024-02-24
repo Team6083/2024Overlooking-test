@@ -31,7 +31,7 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
     DataLogManager.start();
-
+    DriverStation.startDataLog(DataLogManager.getLog());
   }
 
   /**
@@ -48,7 +48,6 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
-    DriverStation.startDataLog(DataLogManager.getLog());
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
