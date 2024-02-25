@@ -295,21 +295,6 @@ public class Drivebase extends SubsystemBase {
     drive(xSpeed, 0, 0, true);
   }
 
-  public void Go_To_45_Angle() {
-    double tan = Math.abs(tag.getBT()[0]) / Math.abs(tag.getBT()[2]);
-    faceToSpecificAnglePID = new PIDController(kPP, kII, kDD);
-    double xSpeed = 0;
-    double ySpeed = 0;
-    if (tag.getTv() == 1) {
-      // xSpeed = PID.calculate(tan, 1);
-      // ySpeed = follow_pid.calcualte();
-
-    }
-    if (Math.abs(tan - 1) < 0.01) {
-      drive(xSpeed, 0, 0, false);
-    }
-  }
-
   public void Go_To_45_Angle_New() {
     // double tan = Math.abs(tag.getBT()[0]) / Math.abs(tag.getBT()[2]);
     double x_offset = tag.getBT()[0];
@@ -325,18 +310,6 @@ public class Drivebase extends SubsystemBase {
       drive(xSpeed, ySpeed, 0, false);
     } else {
       drive(0, 0, 0, false);
-    }
-  }
-
-  public void Go_To_30_Angle() {
-    double tan = Math.abs(tag.getBT()[0]) / Math.abs(tag.getBT()[2]);
-    faceToSpecificAnglePID = new PIDController(kPP, kII, kDD);
-    double speed = 0;
-    if (tag.getTv() == 1) {
-      speed = faceToSpecificAnglePID.calculate(tan, 0.3);
-    }
-    if (Math.abs(tan - 1) < 0.01) {
-      drive(speed, 0, 0, false);
     }
   }
 
