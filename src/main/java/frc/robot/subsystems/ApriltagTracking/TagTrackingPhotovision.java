@@ -75,9 +75,10 @@ public class TagTrackingPhotovision extends SubsystemBase {
 
     }
 
-    // public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Pose3d prevEstimatedRobotPose) {
-    //     photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
-    //     return photonPoseEstimator.update();
+    // public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Pose3d
+    // prevEstimatedRobotPose) {
+    // photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
+    // return photonPoseEstimator.update();
     // }
 
     public List<Pose2d> getTags() {
@@ -180,7 +181,7 @@ public class TagTrackingPhotovision extends SubsystemBase {
         return tagInfo;
     }
 
-    public void putDashboard(){
+    public void putDashboard() {
         SmartDashboard.putNumber("distance", getTagInfo()[1]);
         SmartDashboard.putNumber("ID", getTagInfo()[0]);
     }
