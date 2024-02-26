@@ -78,7 +78,7 @@ public final class Constants {
 
     public static final boolean kGyroInverted = false; // wheather gyro is under the robot
 
-    public static final double kGyroOffSet = 0;
+    public static final double kGyroOffSet = 0.0;
   }
 
   public static final class ModuleConstants {
@@ -128,9 +128,9 @@ public final class Constants {
   }
 
   public static final class AprilTagTrackingConstants {
-    public static final double[] kfollowingTagPID_X = { 0.8, 0.0, 0.006 };
+    public static final double[] kfollowingTagPID_X = { 0.8, 0.0, 0.0 };
     public static final double[] kfollowingTagPID_Y = { 0.8, 0, 0.006 };
-    public static final double[] kfollowingTagPID_R = { 0.8, 0, 0.006 };
+    public static final double[] kfollowingTagPID_R = { 0.3, 0, 0.0 };
   }
 
   public static final class VisionConstants {
