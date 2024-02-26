@@ -6,12 +6,10 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
+import frc.robot.commands.GyroresetCmd;
 import frc.robot.commands.SwerveJoystickCmd;
 import frc.robot.commands.ApriltagCmd.FaceTag;
-import frc.robot.commands.ApriltagCmd.FixDistanceCmd;
-import frc.robot.commands.ApriltagCmd.FollowNewCmd;
-import frc.robot.commands.ApriltagCmd.Go45andFaceNewCmd;
-import frc.robot.commands.ApriltagCmd.Keep45Cmd;
+import frc.robot.commands.ApriltagCmd.FollowCmd;
 // import frc.robot.commands.TrackingCmd.AddTrackingError;
 // import frc.robot.commands.TrackingCmd.MinusTrackingError;
 import frc.robot.commands.TrackingCmd.SwitchTrackConditionCmd;
@@ -69,13 +67,8 @@ public class RobotContainer {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
     drivebase = new Drivebase();
     drivebase.setDefaultCommand(new SwerveJoystickCmd(drivebase, mainController));
-
-    mainController.a().toggleOnTrue(new FaceTag(drivebase));
-    mainController.b().toggleOnTrue(new FixDistanceCmd(drivebase));
-    mainController.y().toggleOnTrue(new FollowNewCmd(drivebase));
+    mainController.y().onTrue(new FaceTag(drivebase).withTimeout(0.5).andThen(new FollowCmd(drivebase).withTimeout(2)));;
     mainController.x().onTrue(new SwitchTrackConditionCmd(drivebase));
-    mainController.pov(45).toggleOnFalse(new Go45andFaceNewCmd(drivebase)); // wonder if we should use on true
-    mainController.pov(90).toggleOnTrue(new Keep45Cmd(drivebase));
     // driverController.pov(90).onTrue(new AddTrackingError(drivetain));
     // driverController.pov(270).onTrue(new MinusTrackingError(drivetain));
   }
