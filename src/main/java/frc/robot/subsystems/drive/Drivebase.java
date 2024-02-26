@@ -227,57 +227,12 @@ public class Drivebase extends SubsystemBase {
   }
 
   public void follow() {
-    double offset = tag.getTx();
-    double hasTarget = tag.getTv();
-    double rot = 0;
-    if (hasTarget == 1) {
-      rot = facingTagPID.calculate(offset, 0);
-    }
-    double[] bt = tag.getBT();
-    double x_dis = bt[2];
-    double y_dis = bt[2];
-    // double hasTarget = tag.getTv();
-    double xSpeed = 0;
-    // double ySpeed = 0;
-    if (hasTarget == 1) {
-      xSpeed = -followingTagPID_X.calculate(x_dis, 0.5);
-      // ySpeed = follow_pid.calculate(y_dis, 1);
-    }
-    SmartDashboard.putNumber("x_dis_speed", xSpeed);
-    // SmartDashboard.putNumber("y_dis_speed", ySpeed);
-    drive(xSpeed, 0, -rot, false);
-    SmartDashboard.putNumber("distance", tag.getMyDistance());
-    // drive(0, 0, -rot, false);
-  }
-
-  public void follow2() {
-    double offset = tag.getTx();
-    double x_dis = tag.getMyDistance();
-    double y_dis = tag.getBT()[2];
+    double x_dis = Math.abs(tag.getBT()[2]);
     if (tag.getTv() == 1) {
-      double xSpeed = followingTagPID_X.calculate(x_dis, 0.5);
-      double ySpeed = followingTagPID_Y.calculate(y_dis, 0);
-      double rot = -followingTagPID_R.calculate(offset, 0);
-      drive(xSpeed, ySpeed, rot, false);
+      double xSpeed = followingTagPID_X.calculate(x_dis, 1.5);
+      drive(xSpeed, 0, 0, true);
     }
-    // SmartDashboard.putNumber("distance", tag.getMyDistance());
   }
-
-  // public void fixDistanceBT() {
-  // double[] bt = tag.getBT();
-  // double x_dis = bt[0];
-  // double y_dis = bt[1];
-  // double hasTarget = tag.getTv();
-  // double xSpeed = 0;
-  // double ySpeed = 0;
-  // if (hasTarget == 1) {
-  // xSpeed = followingTagPID.calculate(x_dis, 0);
-  // ySpeed = followingTagPID.calculate(y_dis, 1);
-  // }
-  // SmartDashboard.putNumber("x_dis_speed", xSpeed);
-  // SmartDashboard.putNumber("y_dis_speed", ySpeed);
-  // drive(xSpeed, 0, 0, true);
-  // }
 
   public void fixDistanceCT() {
     double[] ct = tag.getCT();
