@@ -1,29 +1,37 @@
 package frc.robot.subsystems.ApriltagTracking;
 
+import java.io.IOException;
+import java.util.Optional;
+
+import javax.xml.crypto.dsig.Transform;
+
+import org.photonvision.PhotonUtils;
+
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.AprilTagConstants;
+import frc.robot.Constants.VisionConstants;
 
 public class TagTrackingLimelight extends SubsystemBase {
     public NetworkTable table;
-    public NetworkTableEntry tx;
-    public NetworkTableEntry ty;
-    public NetworkTableEntry ta;
-    public NetworkTableEntry tv;
-    public NetworkTableEntry tid;
-    public NetworkTableEntry tl;
-
-    public NetworkTableEntry BT;
-    public NetworkTableEntry CR;
-    public NetworkTableEntry TR;
-    public NetworkTableEntry CT;
 
     public NetworkTableEntry tlong;
     public NetworkTableEntry tshort;
+
+    public Transform3d robotToCam = VisionConstants.kRobotToCam;
+    public AprilTagFieldLayout m_layout;
 
     public double v;
     public double a;
@@ -51,7 +59,24 @@ public class TagTrackingLimelight extends SubsystemBase {
 
     public TagTrackingLimelight() {
         table = NetworkTableInstance.getDefault().getTable("limelight");
+        setCamMode(1);
+        setLedMode(1);
 
+        try {
+            m_layout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2024Crescendo.m_resourceFile);
+        } catch (IOException err) {
+            // IOException is the base class for exceptions thrown while accessing
+            // information using streams, files and directories
+            throw new RuntimeException();
+        }
+    }
+
+    public void setCamMode(int camMode) {
+        table.getEntry("camMode").setNumber(camMode);
+    }
+
+    public void setLedMode(int ledMode) {
+        table.getEntry("ledMode").setNumber(ledMode);
     }
 
     /**
@@ -185,6 +210,41 @@ public class TagTrackingLimelight extends SubsystemBase {
     // Timer.getFPGATimestamp() - visionBotPose.latencySeconds);
     // }
     // }
+
+    // public double[] getBotPose(){
+    // double[] botpose = table.getEntry("botpose").getDoubleArray(new double [6]);
+    // return botpose;
+    // }
+
+    /**
+     * Gets the tag's pose in 2 dimension
+     * 
+     * @return tagPose
+     */
+    public Pose2d getTagPose2d() {
+        if (getTv() != 0) {
+            Optional<Pose3d> tag_Pose3d = m_layout.getTagPose((int) getTID());
+            Pose2d tagPose2d = tag_Pose3d.isPresent() ? tag_Pose3d.get().toPose2d() : new Pose2d();
+            return tagPose2d;
+        } else {
+            return new Pose2d();
+        }
+    }
+
+    public Pose2d getBotPoseFieldSpace() {
+        if (getTv() != 0) {
+            Rotation2d botposeRotation2d = new Rotation2d(getBT()[5], getBT()[3]);
+            Transform2d botposeTargetSpace = new Transform2d(-getBT()[2], getBT()[0], botposeRotation2d);
+            Pose2d botposeFieldSpace = getTagPose2d().plus(botposeTargetSpace);
+            return botposeFieldSpace;
+        }
+        return new Pose2d();
+    }
+
+    // not done yet
+    public Pose2d getEstimatedBotPose(Pose2d currentTagPose, Pose2d BotPoseFieldSpace) {
+        return new Pose2d();
+    }
 
     public void putDashboard() {
         // SmartDashboard.putNumber("hasTarget", getTv());
