@@ -324,7 +324,7 @@ public class Drivebase extends SubsystemBase {
     putDashboard();
   }
 
-  public double moveToSpecificPoint(double Xsetpoint,double Ysetpoint){
+  public double[] moveToSpecificPoint(double Xsetpoint,double Ysetpoint){
     double Xlength = TagTrackingLimelight.getTx();
     double Ylenght = TagTrackingLimelight.getTy();
     moveToSpecificPointPID = new PIDController(kP, kI, kD);
@@ -332,7 +332,7 @@ public class Drivebase extends SubsystemBase {
     double Yspeed = 0;
     Xspeed = moveToSpecificPointPID.calculate(Xlength,Xsetpoint);
     Yspeed = moveToSpecificPointPID.calculate(Ylenght,Ysetpoint);
-    return Xspeed;
-    return Yspeed;
+    double [] speed = {Xspeed,Yspeed};
+    return speed;
   }
 }
