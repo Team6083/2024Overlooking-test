@@ -48,7 +48,7 @@ public class Drivebase extends SubsystemBase {
   private PIDController followingTagPID;
 
   public PIDController faceToSpecificAnglePID;
-
+  public PIDController moveToSpecificPointPID;
   // face method value maybe correct
   private final double kP = 0.08;
   private final double kI = 0;
@@ -322,5 +322,17 @@ public class Drivebase extends SubsystemBase {
     updateOdometry();
    tag.putDashboard();
     putDashboard();
+  }
+
+  public double moveToSpecificPoint(double Xsetpoint,double Ysetpoint){
+    double Xlength = TagTrackingLimelight.getTx();
+    double Ylenght = TagTrackingLimelight.getTy();
+    moveToSpecificPointPID = new PIDController(kP, kI, kD);
+    double Xspeed = 0;
+    double Yspeed = 0;
+    Xspeed = moveToSpecificPointPID.calculate(Xlength,Xsetpoint);
+    Yspeed = moveToSpecificPointPID.calculate(Ylenght,Ysetpoint);
+    return Xspeed;
+    return Yspeed;
   }
 }
