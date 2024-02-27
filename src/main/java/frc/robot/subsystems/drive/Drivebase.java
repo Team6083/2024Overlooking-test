@@ -67,7 +67,7 @@ public class Drivebase extends SubsystemBase {
   private Boolean trackingCondition = false;
 
   private NoteTrackingPhotovision note;
-  private TagTrackingLimelight tag;
+  // private TagTrackingLimelight tag;
 
   private SwerveModuleState[] swerveModuleStates = new SwerveModuleState[4];
 
@@ -90,7 +90,7 @@ public class Drivebase extends SubsystemBase {
         DrivebaseConstants.kBackRightTurningMotorChannel, DrivebaseConstants.kBackRightTurningEncoderChannel,
         DrivebaseConstants.kBackRightDriveMotorInverted, DrivebaseConstants.kBackRightCanCoderMagOffset);
 
-    tag = new TagTrackingLimelight();
+    // tag = new TagTrackingLimelight();
 
     SmartDashboard.putData("frontLeft", frontLeft);
     SmartDashboard.putData("frontRight", frontRight);
@@ -206,8 +206,8 @@ public class Drivebase extends SubsystemBase {
   }
 
   public void faceTarget() {
-    double offset = tag.getTx();
-    double hasTarget = tag.getTv();
+    double offset = TagTrackingLimelight.getTx();
+    double hasTarget = TagTrackingLimelight.getTv();
     double rot = 0;
     if (hasTarget == 1) {
       rot = facingTagPID.calculate(offset, 0);
@@ -216,8 +216,8 @@ public class Drivebase extends SubsystemBase {
   }
 
   public double faceTargetMethod2() {
-    double offset = tag.getTx();
-    double hasTarget = tag.getTv();
+    double offset = TagTrackingLimelight.getTx();
+    double hasTarget = TagTrackingLimelight.getTv();
     double rot = 0;
     if (hasTarget == 1) {
       rot = -facingTagPID.calculate(offset, 0);
@@ -227,18 +227,18 @@ public class Drivebase extends SubsystemBase {
   }
 
   public void follow() {
-    double x_dis = Math.abs(tag.getBT()[2]);
-    if (tag.getTv() == 1) {
+    double x_dis = Math.abs(TagTrackingLimelight.getBT()[2]);
+    if (TagTrackingLimelight.getTv() == 1) {
       double xSpeed = followingTagPID_X.calculate(x_dis, 1.5);
       drive(xSpeed, 0, 0, true);
     }
   }
 
   public void fixDistanceCT() {
-    double[] ct = tag.getCT();
+    double[] ct = TagTrackingLimelight.getCT();
     double x_dis = ct[0];
     double y_dis = ct[1];
-    double hasTarget = tag.getTv();
+    double hasTarget = TagTrackingLimelight.getTv();
     double xSpeed = 0;
     double ySpeed = 0;
     if (hasTarget == 1) {
@@ -252,12 +252,12 @@ public class Drivebase extends SubsystemBase {
 
   public void Go_To_45_Angle_New() {
     // double tan = Math.abs(tag.getBT()[0]) / Math.abs(tag.getBT()[2]);
-    double x_offset = tag.getBT()[0];
-    double z_offset = tag.getBT()[2];
+    double x_offset = TagTrackingLimelight.getBT()[0];
+    double z_offset = TagTrackingLimelight.getBT()[2];
     faceToSpecificAnglePID = new PIDController(kPP, kII, kDD);
     double xSpeed = 0;
     double ySpeed = 0;
-    if (tag.getTv() == 1) {
+    if (TagTrackingLimelight.getTv() == 1) {
       xSpeed = faceToSpecificAnglePID.calculate(x_offset, 1);
       ySpeed = followingTagPID.calculate(z_offset, 1);
     }
@@ -269,10 +269,10 @@ public class Drivebase extends SubsystemBase {
   }
 
   public void Keep_45_Angle() {
-    double offset = tag.getTlong() / tag.getTshort();
+    double offset = TagTrackingLimelight.getTlong() / TagTrackingLimelight.getTshort();
     faceToSpecificAnglePID = new PIDController(kPP, kII, kDD);
     double speed = 0;
-    if (tag.getTv() == 1) {
+    if (TagTrackingLimelight.getTv() == 1) {
       speed = faceToSpecificAnglePID.calculate(offset, 1.414);
     }
     drive(0, 0, speed, false);
@@ -320,7 +320,7 @@ public class Drivebase extends SubsystemBase {
     // This method will be called once per scheduler run
     publisher.set(swerveModuleStates);
     updateOdometry();
-   tag.putDashboard();
+   TagTrackingLimelight.putDashboard();
     putDashboard();
   }
 }
