@@ -135,7 +135,7 @@ public class TagTrackingLimelight extends SubsystemBase {
         return ID;
     }
 
-    public  static double getTl() {
+    public static double getTl() {
         latency = table.getEntry("tl").getDouble(0);
         return latency;
     }
@@ -169,8 +169,8 @@ public class TagTrackingLimelight extends SubsystemBase {
         return tagShort;
     }
 
-    public static void setPrimaryInViewTag(double priorityID){
-
+    public static void setPrimaryInViewTag(int priorityID) {
+        table.getEntry("priorityid").setNumber(priorityID);
     }
 
     // public void updatePoseEstimatorWithVisionBotPose() {
@@ -246,7 +246,8 @@ public class TagTrackingLimelight extends SubsystemBase {
     }
 
     // not done yet
-    public static Pose2d getEstimatedBotPose(Pose2d currentTagPose, Pose2d BotPoseFieldSpace, double xDis, double yDis, double pitch) {
+    public static Pose2d getEstimatedBotPose(Pose2d currentTagPose, Pose2d BotPoseFieldSpace, double xDis, double yDis,
+            double pitch) {
         // Pose2d botpose = ;
         return new Pose2d();
     }
