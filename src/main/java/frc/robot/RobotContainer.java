@@ -13,6 +13,7 @@ import frc.robot.commands.ApriltagCmd.FollowCmd;
 // import frc.robot.commands.TrackingCmd.AddTrackingError;
 // import frc.robot.commands.TrackingCmd.MinusTrackingError;
 import frc.robot.commands.TrackingCmd.SwitchTrackConditionCmd;
+import frc.robot.subsystems.ApriltagTracking.TagTrackingLimelight;
 import frc.robot.subsystems.drive.Drivebase;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -47,6 +48,7 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureBindings();
     putDashboard();
+    TagTrackingLimelight.init();
   }
 
   /**

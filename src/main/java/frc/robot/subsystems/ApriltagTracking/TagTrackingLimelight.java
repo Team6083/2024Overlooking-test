@@ -57,7 +57,7 @@ public class TagTrackingLimelight extends SubsystemBase {
     public static double angleToGoalRadians;
     public static double goalHeightInches;
 
-    public TagTrackingLimelight() {
+    public static void init() {
         table = NetworkTableInstance.getDefault().getTable("limelight");
         setCamMode(1);
         setLedMode(1);
