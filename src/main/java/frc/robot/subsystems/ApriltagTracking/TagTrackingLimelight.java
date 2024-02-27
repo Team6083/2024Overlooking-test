@@ -25,37 +25,37 @@ import frc.robot.Constants.AprilTagConstants;
 import frc.robot.Constants.VisionConstants;
 
 public class TagTrackingLimelight extends SubsystemBase {
-    public NetworkTable table;
+    public static NetworkTable table;
 
-    public NetworkTableEntry tlong;
-    public NetworkTableEntry tshort;
+    public static NetworkTableEntry tlong;
+    public static NetworkTableEntry tshort;
 
-    public Transform3d robotToCam = VisionConstants.kRobotToCam;
-    public AprilTagFieldLayout m_layout;
+    public static Transform3d robotToCam = VisionConstants.kRobotToCam;
+    public static AprilTagFieldLayout m_layout;
 
-    public double v;
-    public double a;
-    public double x;
-    public double y;
-    public double area;
-    public double ID;
-    public double latency;
-    public double tagLong;
-    public double tagShort;
+    public static double v;
+    public static double a;
+    public static double x;
+    public static double y;
+    public static double area;
+    public static double ID;
+    public static double latency;
+    public static double tagLong;
+    public static double tagShort;
 
-    public double[] bt; // botpose_targetspace
-    public double[] cr;// camerapose_robotspace
-    public double[] tr; // targetpose_robotpose;
-    public double[] ct; // camerapose_targetspace
+    public static double[] bt; // botpose_targetspace
+    public static double[] cr;// camerapose_robotspace
+    public static double[] tr; // targetpose_robotpose;
+    public static double[] ct; // camerapose_targetspace
 
-    public double MyDistance;
+    public static double MyDistance;
 
-    public final double limelightLensHeightInches = 0;
-    public final double limelightMountAngleDegrees = 0;
-    public double targetOffsetAngle_Vertical;
-    public double angleToGoalDegrees;
-    public double angleToGoalRadians;
-    public double goalHeightInches;
+    public static final double limelightLensHeightInches = 0;
+    public static final double limelightMountAngleDegrees = 0;
+    public static double targetOffsetAngle_Vertical;
+    public static double angleToGoalDegrees;
+    public static double angleToGoalRadians;
+    public static double goalHeightInches;
 
     public TagTrackingLimelight() {
         table = NetworkTableInstance.getDefault().getTable("limelight");
@@ -71,11 +71,11 @@ public class TagTrackingLimelight extends SubsystemBase {
         }
     }
 
-    public void setCamMode(int camMode) {
+    public static void setCamMode(int camMode) {
         table.getEntry("camMode").setNumber(camMode);
     }
 
-    public void setLedMode(int ledMode) {
+    public static void setLedMode(int ledMode) {
         table.getEntry("ledMode").setNumber(ledMode);
     }
 
@@ -84,7 +84,7 @@ public class TagTrackingLimelight extends SubsystemBase {
      * 
      * @return distance
      */
-    public double getMyDistance() {
+    public static double getMyDistance() {
         double target_height = getBT()[1]; // botpose in targetspace y
         double x_dis = getBT()[0];
         double z_dis = getBT()[2];
@@ -100,7 +100,7 @@ public class TagTrackingLimelight extends SubsystemBase {
      * 
      * @return x offset
      */
-    public double getTx() {
+    public static double getTx() {
         x = table.getEntry("tx").getDouble(0);
         return x;
     }
@@ -110,12 +110,12 @@ public class TagTrackingLimelight extends SubsystemBase {
      * 
      * @return y offset
      */
-    public double getTy() {
+    public static double getTy() {
         y = table.getEntry("ty").getDouble(0);
         return y;
     }
 
-    public double getTa() {
+    public static double getTa() {
         a = table.getEntry("ta").getDouble(0);
         return a;
     }
@@ -125,17 +125,17 @@ public class TagTrackingLimelight extends SubsystemBase {
      * 
      * @return 0 or 1
      */
-    public double getTv() {
+    public static double getTv() {
         v = table.getEntry("tv").getDouble(0);
         return v;
     }
 
-    public double getTID() {
+    public static double getTID() {
         ID = table.getEntry("tid").getDouble(0);
         return ID;
     }
 
-    public double getTl() {
+    public  static double getTl() {
         latency = table.getEntry("tl").getDouble(0);
         return latency;
     }
@@ -149,24 +149,28 @@ public class TagTrackingLimelight extends SubsystemBase {
      * 
      * @return x, y, z, roll, pitch, yaw
      */
-    public double[] getBT() {
+    public static double[] getBT() {
         bt = table.getEntry("botpose_targetspace").getDoubleArray(new double[6]);
         return bt;
     }
 
-    public double[] getCT() {
+    public static double[] getCT() {
         ct = table.getEntry("camerapose_targetspace").getDoubleArray(new double[6]);
         return ct;
     }
 
-    public double getTlong() {
+    public static double getTlong() {
         tagLong = table.getEntry("tlong").getDouble(0);
         return tagLong;
     }
 
-    public double getTshort() {
+    public static double getTshort() {
         tagShort = table.getEntry("tshort").getDouble(0);
         return tagShort;
+    }
+
+    public static void setPrimaryInViewTag(double priorityID){
+
     }
 
     // public void updatePoseEstimatorWithVisionBotPose() {
@@ -221,7 +225,7 @@ public class TagTrackingLimelight extends SubsystemBase {
      * 
      * @return tagPose
      */
-    public Pose2d getTagPose2d() {
+    public static Pose2d getTagPose2d() {
         if (getTv() != 0) {
             Optional<Pose3d> tag_Pose3d = m_layout.getTagPose((int) getTID());
             Pose2d tagPose2d = tag_Pose3d.isPresent() ? tag_Pose3d.get().toPose2d() : new Pose2d();
@@ -231,7 +235,7 @@ public class TagTrackingLimelight extends SubsystemBase {
         }
     }
 
-    public Pose2d getBotPoseFieldSpace() {
+    public static Pose2d getBotPoseFieldSpace() {
         if (getTv() != 0) {
             Rotation2d botposeRotation2d = new Rotation2d(getBT()[5], getBT()[3]);
             Transform2d botposeTargetSpace = new Transform2d(-getBT()[2], getBT()[0], botposeRotation2d);
@@ -242,11 +246,12 @@ public class TagTrackingLimelight extends SubsystemBase {
     }
 
     // not done yet
-    public Pose2d getEstimatedBotPose(Pose2d currentTagPose, Pose2d BotPoseFieldSpace) {
+    public static Pose2d getEstimatedBotPose(Pose2d currentTagPose, Pose2d BotPoseFieldSpace, double xDis, double yDis, double pitch) {
+        // Pose2d botpose = ;
         return new Pose2d();
     }
 
-    public void putDashboard() {
+    public static void putDashboard() {
         // SmartDashboard.putNumber("hasTarget", getTv());
         SmartDashboard.putNumber("LimelightX", getTx());
         SmartDashboard.putNumber("LimelightY", getTy());
