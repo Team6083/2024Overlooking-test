@@ -57,7 +57,7 @@ public class Drivebase extends SubsystemBase {
   // fix position
   public static final double kfP = 0.3;
   public static final double kfI = 0;
-  public static final double kfD = 0.006;  // fix position
+  public static final double kfD = 0.006; // fix position
   public static final double kPP = 0.03;
   public static final double kII = 0;
   public static final double kDD = 0;
@@ -137,7 +137,7 @@ public class Drivebase extends SubsystemBase {
   }
 
   StructArrayPublisher<SwerveModuleState> publisher = NetworkTableInstance.getDefault()
-    .getStructArrayTopic("MyStates", SwerveModuleState.struct).publish();
+      .getStructArrayTopic("MyStates", SwerveModuleState.struct).publish();
 
   public void setGyroReset() {
     gyro.reset();
@@ -320,19 +320,19 @@ public class Drivebase extends SubsystemBase {
     // This method will be called once per scheduler run
     publisher.set(swerveModuleStates);
     updateOdometry();
-   TagTrackingLimelight.putDashboard();
+    TagTrackingLimelight.putDashboard();
     putDashboard();
   }
 
-  public double[] moveToSpecificPoint(double Xsetpoint,double Ysetpoint){
-    double Xlength = TagTrackingLimelight.getTx();
-    double Ylenght = TagTrackingLimelight.getTy();
-    moveToSpecificPointPID = new PIDController(kP, kI, kD);
+  public double[] moveToSpecificPoint(double Xsetpoint, double Ysetpoint) {
+    double Xlength = TagTrackingLimelight.getTx();//不是Tx，是BT[0]
+    double Ylenght = TagTrackingLimelight.getTy();//應該是BT[2]
+    moveToSpecificPointPID = new PIDController(kP, kI, kD);//不要在這裡建，在建構式就建好
     double Xspeed = 0;
     double Yspeed = 0;
-    Xspeed = moveToSpecificPointPID.calculate(Xlength,Xsetpoint);
-    Yspeed = moveToSpecificPointPID.calculate(Ylenght,Ysetpoint);
-    double [] speed = {Xspeed,Yspeed};
+    Xspeed = moveToSpecificPointPID.calculate(Xlength, Xsetpoint);
+    Yspeed = moveToSpecificPointPID.calculate(Ylenght, Ysetpoint);
+    double[] speed = { Xspeed, Yspeed };
     return speed;
   }
 }

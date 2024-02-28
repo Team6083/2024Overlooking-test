@@ -6,7 +6,6 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
-import frc.robot.commands.GyroresetCmd;
 import frc.robot.commands.SwerveJoystickCmd;
 import frc.robot.commands.ApriltagCmd.FaceTag;
 import frc.robot.commands.ApriltagCmd.FollowCmd;
