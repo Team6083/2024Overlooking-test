@@ -67,7 +67,7 @@ public class Drivebase extends SubsystemBase {
   private Boolean trackingCondition = false;
 
   private NoteTrackingPhotovision note;
-  // private TagTrackingLimelight tag;
+  private TagTrackingLimelight tag;
 
   private SwerveModuleState[] swerveModuleStates = new SwerveModuleState[4];
 
@@ -90,7 +90,7 @@ public class Drivebase extends SubsystemBase {
         DrivebaseConstants.kBackRightTurningMotorChannel, DrivebaseConstants.kBackRightTurningEncoderChannel,
         DrivebaseConstants.kBackRightDriveMotorInverted, DrivebaseConstants.kBackRightCanCoderMagOffset);
 
-    // tag = new TagTrackingLimelight();
+    tag = new TagTrackingLimelight();
 
     SmartDashboard.putData("frontLeft", frontLeft);
     SmartDashboard.putData("frontRight", frontRight);
@@ -210,8 +210,8 @@ public class Drivebase extends SubsystemBase {
   }
 
   public void faceTarget() {
-    double offset = TagTrackingLimelight.getTx();
-    double hasTarget = TagTrackingLimelight.getTv();
+    double offset =tag.getTx();
+    double hasTarget = tag.getTv();
     double rot = 0;
     if (hasTarget == 1) {
       rot = facingTagPID.calculate(offset, 0);
@@ -220,8 +220,8 @@ public class Drivebase extends SubsystemBase {
   }
 
   public double faceTargetMethod2() {
-    double offset = TagTrackingLimelight.getTx();
-    double hasTarget = TagTrackingLimelight.getTv();
+    double offset = tag.getTx();
+    double hasTarget = tag.getTv();
     double rot = 0;
     if (hasTarget == 1) {
       rot = -facingTagPID.calculate(offset, 0);
@@ -231,18 +231,18 @@ public class Drivebase extends SubsystemBase {
   }
 
   public void follow() {
-    double x_dis = Math.abs(TagTrackingLimelight.getBT()[2]);
-    if (TagTrackingLimelight.getTv() == 1) {
+    double x_dis = Math.abs(tag.getBT()[2]);
+    if (tag.getTv() == 1) {
       double xSpeed = followingTagPID_X.calculate(x_dis, 1.5);
       drive(xSpeed, 0, 0, true);
     }
   }
 
   public void fixDistanceCT() {
-    double[] ct = TagTrackingLimelight.getCT();
+    double[] ct = tag.getCT();
     double x_dis = ct[0];
     double y_dis = ct[1];
-    double hasTarget = TagTrackingLimelight.getTv();
+    double hasTarget = tag.getTv();
     double xSpeed = 0;
     double ySpeed = 0;
     if (hasTarget == 1) {
@@ -256,12 +256,12 @@ public class Drivebase extends SubsystemBase {
 
   public void Go_To_45_Angle_New() {
     // double tan = Math.abs(tag.getBT()[0]) / Math.abs(tag.getBT()[2]);
-    double x_offset = TagTrackingLimelight.getBT()[0];
-    double z_offset = TagTrackingLimelight.getBT()[2];
+    double x_offset = tag.getBT()[0];
+    double z_offset = tag.getBT()[2];
     faceToSpecificAnglePID = new PIDController(kPP, kII, kDD);
     double xSpeed = 0;
     double ySpeed = 0;
-    if (TagTrackingLimelight.getTv() == 1) {
+    if (tag.getTv() == 1) {
       xSpeed = faceToSpecificAnglePID.calculate(x_offset, 1);
       ySpeed = followingTagPID.calculate(z_offset, 1);
     }
@@ -273,19 +273,19 @@ public class Drivebase extends SubsystemBase {
   }
 
   public void Keep_45_Angle() {
-    double offset = TagTrackingLimelight.getTlong() / TagTrackingLimelight.getTshort();
+    double offset = tag.getTlong() / tag.getTshort();
     faceToSpecificAnglePID = new PIDController(kPP, kII, kDD);
     double speed = 0;
-    if (TagTrackingLimelight.getTv() == 1) {
+    if (tag.getTv() == 1) {
       speed = faceToSpecificAnglePID.calculate(offset, 1.414);
     }
     drive(0, 0, speed, false);
   }
 
   public void setRedSpeakerPipeline(){
-    TagTrackingLimelight.setCamMode(1);
-    TagTrackingLimelight.setLedMode(1);
-    TagTrackingLimelight.setPipeline(4);
+    tag.setCamMode(1);
+    tag.setLedMode(1);
+    tag.setPipeline(4);
     }
 
   public void switchTrackCondition() {
@@ -323,7 +323,7 @@ public class Drivebase extends SubsystemBase {
     SmartDashboard.putNumber("backRight_speed", swerveModuleStates[3].speedMetersPerSecond);
     SmartDashboard.putNumber("gyro_heading", gyroRotation2d().getDegrees() % 360.0);
     SmartDashboard.putBoolean("trackingCondition", trackingCondition);
-    TagTrackingLimelight.putDashboard();
+    tag.putDashboard();
   }
 
   @Override
@@ -340,8 +340,8 @@ public class Drivebase extends SubsystemBase {
    * @param Xsetpoint left and right
    */
   public double[] moveToSpecificPoint(double Zsetpoint,double Xsetpoint){
-    double Zlength = TagTrackingLimelight.getBT()[2];
-    double Xlength = TagTrackingLimelight.getBT()[0];
+    double Zlength = tag.getBT()[2];
+    double Xlength = tag.getBT()[0];
    
     double Zspeed = 0;
     double Xspeed = 0;
