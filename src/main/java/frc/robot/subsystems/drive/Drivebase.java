@@ -134,6 +134,10 @@ public class Drivebase extends SubsystemBase {
         AprilTagTrackingConstants.kIfollowR,
         AprilTagTrackingConstants.kDfollowR);
     facingTagPID = new PIDController(kP, kI, kD);
+    moveToSpecificPointPID = new PIDController(
+      AprilTagTrackingConstants.kPmoveToSpecificPoint,
+     AprilTagTrackingConstants.kImoveToSpecificPoint, 
+     AprilTagTrackingConstants.kDmoveToSpecificPoint);
   }
 
   StructArrayPublisher<SwerveModuleState> publisher = NetworkTableInstance.getDefault()
@@ -330,16 +334,20 @@ public class Drivebase extends SubsystemBase {
     putDashboard();
   }
 
-  public double[] moveToSpecificPoint(double Xsetpoint, double Ysetpoint) {
-    double Xlength = TagTrackingLimelight.getBT()[0];// 不是Tx，是BT[0]
-    double Ylenght = TagTrackingLimelight.getBT()[2];// 應該是BT[2]
-    moveToSpecificPointPID = new PIDController(kP, kI, kD);// 不要在這裡建，在建構式就建好 
-    // PID value need to change, shouldn't be using the same pid value with other methods
+  /**
+   * Move to specific point
+   * @param Zsetpoint back and forth
+   * @param Xsetpoint left and right
+   */
+  public double[] moveToSpecificPoint(double Zsetpoint,double Xsetpoint){
+    double Zlength = TagTrackingLimelight.getBT()[2];
+    double Xlength = TagTrackingLimelight.getBT()[0];
+   
+    double Zspeed = 0;
     double Xspeed = 0;
-    double Yspeed = 0;
-    Xspeed = moveToSpecificPointPID.calculate(Xlength, Xsetpoint);
-    Yspeed = moveToSpecificPointPID.calculate(Ylenght, Ysetpoint);
-    double[] speed = { Xspeed, Yspeed };
+    Zspeed = moveToSpecificPointPID.calculate(Zlength,Zsetpoint);
+    Xspeed = moveToSpecificPointPID.calculate(Xlength,Xsetpoint);
+    double [] speed = {Zspeed,Xspeed};
     return speed;
   }
 }

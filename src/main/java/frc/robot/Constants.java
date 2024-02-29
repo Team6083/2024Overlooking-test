@@ -128,6 +128,7 @@ public final class Constants {
   }
 
   public static final class AprilTagTrackingConstants {
+
     public static final double kPfollowX =  0.8;
     public static final double kIfollowX =  0.0;
     public static final double kDfollowX =  0.0;
@@ -137,6 +138,13 @@ public final class Constants {
     public static final double kPfollowR =  0.3;
     public static final double kIfollowR =  0.0;
     public static final double kDfollowR =  0.0;
+
+    public static final double[] kfollowingTagPID_X = { 0.8, 0.0, 0.0 };
+    public static final double[] kfollowingTagPID_Y = { 0.8, 0, 0.006 };
+    public static final double[] kfollowingTagPID_R = { 0.3, 0, 0.0 };
+    public static final double kPmoveToSpecificPoint = 0.0;
+    public static final double kImoveToSpecificPoint = 0.0;
+    public static final double kDmoveToSpecificPoint = 0.0;
   }
 
   public static final class VisionConstants {
