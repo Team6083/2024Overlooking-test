@@ -57,7 +57,7 @@ public class Drivebase extends SubsystemBase {
   // fix position
   public static final double kfP = 0.3;
   public static final double kfI = 0;
-  public static final double kfD = 0.006;  // fix position
+  public static final double kfD = 0.006; // fix position
   public static final double kPP = 0.03;
   public static final double kII = 0;
   public static final double kDD = 0;
@@ -141,7 +141,7 @@ public class Drivebase extends SubsystemBase {
   }
 
   StructArrayPublisher<SwerveModuleState> publisher = NetworkTableInstance.getDefault()
-    .getStructArrayTopic("MyStates", SwerveModuleState.struct).publish();
+      .getStructArrayTopic("MyStates", SwerveModuleState.struct).publish();
 
   public void setGyroReset() {
     gyro.reset();
@@ -282,6 +282,12 @@ public class Drivebase extends SubsystemBase {
     drive(0, 0, speed, false);
   }
 
+  public void setRedSpeakerPipeline(){
+    TagTrackingLimelight.setCamMode(1);
+    TagTrackingLimelight.setLedMode(1);
+    TagTrackingLimelight.setPipeline(4);
+    }
+
   public void switchTrackCondition() {
     trackingCondition = !trackingCondition;
   }
@@ -317,6 +323,7 @@ public class Drivebase extends SubsystemBase {
     SmartDashboard.putNumber("backRight_speed", swerveModuleStates[3].speedMetersPerSecond);
     SmartDashboard.putNumber("gyro_heading", gyroRotation2d().getDegrees() % 360.0);
     SmartDashboard.putBoolean("trackingCondition", trackingCondition);
+    TagTrackingLimelight.putDashboard();
   }
 
   @Override
@@ -324,7 +331,6 @@ public class Drivebase extends SubsystemBase {
     // This method will be called once per scheduler run
     publisher.set(swerveModuleStates);
     updateOdometry();
-   TagTrackingLimelight.putDashboard();
     putDashboard();
   }
 

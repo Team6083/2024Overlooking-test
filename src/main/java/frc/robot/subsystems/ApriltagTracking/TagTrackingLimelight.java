@@ -57,10 +57,11 @@ public class TagTrackingLimelight extends SubsystemBase {
     public static double angleToGoalRadians;
     public static double goalHeightInches;
 
-    public TagTrackingLimelight() {
+    public static void init() {
         table = NetworkTableInstance.getDefault().getTable("limelight");
         setCamMode(1);
         setLedMode(1);
+        setPipeline(0);
 
         try {
             m_layout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2024Crescendo.m_resourceFile);
@@ -130,12 +131,16 @@ public class TagTrackingLimelight extends SubsystemBase {
         return v;
     }
 
+    /**
+     * Returns the fiducial tag's ID (double)
+     * @return tag ID
+     */
     public static double getTID() {
         ID = table.getEntry("tid").getDouble(0);
         return ID;
     }
 
-    public  static double getTl() {
+    public static double getTl() {
         latency = table.getEntry("tl").getDouble(0);
         return latency;
     }
@@ -169,8 +174,16 @@ public class TagTrackingLimelight extends SubsystemBase {
         return tagShort;
     }
 
-    public static void setPrimaryInViewTag(double priorityID){
+    /**
+     * Set priority tag iD
+     * @param priorityID the priority tag ID (int)
+     */
+    public static void setPriorityInViewTag(int priorityID) {
+        table.getEntry("priorityid").setNumber(priorityID);
+    }
 
+    public static void setPipeline(int pipeline){
+        table.getEntry("pipeline").setNumber(pipeline);
     }
 
     // public void updatePoseEstimatorWithVisionBotPose() {
@@ -246,7 +259,8 @@ public class TagTrackingLimelight extends SubsystemBase {
     }
 
     // not done yet
-    public static Pose2d getEstimatedBotPose(Pose2d currentTagPose, Pose2d BotPoseFieldSpace, double xDis, double yDis, double pitch) {
+    public static Pose2d getEstimatedBotPose(Pose2d currentTagPose, Pose2d BotPoseFieldSpace, double xDis, double yDis,
+            double pitch) {
         // Pose2d botpose = ;
         return new Pose2d();
     }
