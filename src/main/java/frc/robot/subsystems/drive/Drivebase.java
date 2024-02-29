@@ -134,6 +134,10 @@ public class Drivebase extends SubsystemBase {
         AprilTagTrackingConstants.kfollowingTagPID_R[1],
         AprilTagTrackingConstants.kfollowingTagPID_R[2]);
     facingTagPID = new PIDController(kP, kI, kD);
+    moveToSpecificPointPID = new PIDController(
+      AprilTagTrackingConstants.kPmoveToSpecificPoint,
+     AprilTagTrackingConstants.kImoveToSpecificPoint, 
+     AprilTagTrackingConstants.kDmoveToSpecificPoint);
   }
 
   StructArrayPublisher<SwerveModuleState> publisher = NetworkTableInstance.getDefault()
@@ -324,15 +328,20 @@ public class Drivebase extends SubsystemBase {
     putDashboard();
   }
 
-  public double[] moveToSpecificPoint(double Xsetpoint,double Ysetpoint){
-    double Xlength = TagTrackingLimelight.getTx();
-    double Ylenght = TagTrackingLimelight.getTy();
-    moveToSpecificPointPID = new PIDController(kP, kI, kD);
+  /**
+   * Move to specific point
+   * @param Zsetpoint back and forth
+   * @param Xsetpoint left and right
+   */
+  public double[] moveToSpecificPoint(double Zsetpoint,double Xsetpoint){
+    double Zlength = TagTrackingLimelight.getBT()[2];
+    double Xlength = TagTrackingLimelight.getBT()[0];
+   
+    double Zspeed = 0;
     double Xspeed = 0;
-    double Yspeed = 0;
+    Zspeed = moveToSpecificPointPID.calculate(Zlength,Zsetpoint);
     Xspeed = moveToSpecificPointPID.calculate(Xlength,Xsetpoint);
-    Yspeed = moveToSpecificPointPID.calculate(Ylenght,Ysetpoint);
-    double [] speed = {Xspeed,Yspeed};
+    double [] speed = {Zspeed,Xspeed};
     return speed;
   }
 }
