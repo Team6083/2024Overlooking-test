@@ -278,6 +278,12 @@ public class Drivebase extends SubsystemBase {
     drive(0, 0, speed, false);
   }
 
+  public void setRedSpeakerPipeline(){
+    TagTrackingLimelight.setCamMode(1);
+    TagTrackingLimelight.setLedMode(1);
+    TagTrackingLimelight.setPipeline(4);
+    }
+
   public void switchTrackCondition() {
     trackingCondition = !trackingCondition;
   }
@@ -313,6 +319,7 @@ public class Drivebase extends SubsystemBase {
     SmartDashboard.putNumber("backRight_speed", swerveModuleStates[3].speedMetersPerSecond);
     SmartDashboard.putNumber("gyro_heading", gyroRotation2d().getDegrees() % 360.0);
     SmartDashboard.putBoolean("trackingCondition", trackingCondition);
+    TagTrackingLimelight.putDashboard();
   }
 
   @Override
@@ -320,14 +327,14 @@ public class Drivebase extends SubsystemBase {
     // This method will be called once per scheduler run
     publisher.set(swerveModuleStates);
     updateOdometry();
-    TagTrackingLimelight.putDashboard();
     putDashboard();
   }
 
   public double[] moveToSpecificPoint(double Xsetpoint, double Ysetpoint) {
-    double Xlength = TagTrackingLimelight.getTx();//不是Tx，是BT[0]
-    double Ylenght = TagTrackingLimelight.getTy();//應該是BT[2]
-    moveToSpecificPointPID = new PIDController(kP, kI, kD);//不要在這裡建，在建構式就建好
+    double Xlength = TagTrackingLimelight.getBT()[0];// 不是Tx，是BT[0]
+    double Ylenght = TagTrackingLimelight.getBT()[2];// 應該是BT[2]
+    moveToSpecificPointPID = new PIDController(kP, kI, kD);// 不要在這裡建，在建構式就建好 
+    // PID value need to change, shouldn't be using the same pid value with other methods
     double Xspeed = 0;
     double Yspeed = 0;
     Xspeed = moveToSpecificPointPID.calculate(Xlength, Xsetpoint);

@@ -61,6 +61,7 @@ public class TagTrackingLimelight extends SubsystemBase {
         table = NetworkTableInstance.getDefault().getTable("limelight");
         setCamMode(1);
         setLedMode(1);
+        setPipeline(0);
 
         try {
             m_layout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2024Crescendo.m_resourceFile);
@@ -130,6 +131,10 @@ public class TagTrackingLimelight extends SubsystemBase {
         return v;
     }
 
+    /**
+     * Returns the fiducial tag's ID (double)
+     * @return tag ID
+     */
     public static double getTID() {
         ID = table.getEntry("tid").getDouble(0);
         return ID;
@@ -169,8 +174,16 @@ public class TagTrackingLimelight extends SubsystemBase {
         return tagShort;
     }
 
-    public static void setPrimaryInViewTag(int priorityID) {
+    /**
+     * Set priority tag iD
+     * @param priorityID the priority tag ID (int)
+     */
+    public static void setPriorityInViewTag(int priorityID) {
         table.getEntry("priorityid").setNumber(priorityID);
+    }
+
+    public static void setPipeline(int pipeline){
+        table.getEntry("pipeline").setNumber(pipeline);
     }
 
     // public void updatePoseEstimatorWithVisionBotPose() {
