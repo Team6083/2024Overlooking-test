@@ -25,37 +25,34 @@ import frc.robot.Constants.AprilTagConstants;
 import frc.robot.Constants.VisionConstants;
 
 public class TagTrackingLimelight extends SubsystemBase {
-    public static NetworkTable table;
+    public NetworkTable table;
 
-    public static NetworkTableEntry tlong;
-    public static NetworkTableEntry tshort;
+    public Transform3d robotToCam = VisionConstants.kRobotToCam;
+    public AprilTagFieldLayout m_layout;
 
-    public static Transform3d robotToCam = VisionConstants.kRobotToCam;
-    public static AprilTagFieldLayout m_layout;
+    public double v;
+    public double a;
+    public double x;
+    public double y;
+    public double area;
+    public double ID;
+    public double latency;
+    public double tagLong;
+    public double tagShort;
 
-    public static double v;
-    public static double a;
-    public static double x;
-    public static double y;
-    public static double area;
-    public static double ID;
-    public static double latency;
-    public static double tagLong;
-    public static double tagShort;
+    public double[] bt; // botpose_targetspace
+    public double[] cr;// camerapose_robotspace
+    public double[] tr; // targetpose_robotpose;
+    public double[] ct; // camerapose_targetspace
 
-    public static double[] bt; // botpose_targetspace
-    public static double[] cr;// camerapose_robotspace
-    public static double[] tr; // targetpose_robotpose;
-    public static double[] ct; // camerapose_targetspace
+    public double MyDistance;
 
-    public static double MyDistance;
-
-    public static final double limelightLensHeightInches = 0;
-    public static final double limelightMountAngleDegrees = 0;
-    public static double targetOffsetAngle_Vertical;
-    public static double angleToGoalDegrees;
-    public static double angleToGoalRadians;
-    public static double goalHeightInches;
+    public final double limelightLensHeightInches = 0;
+    public final double limelightMountAngleDegrees = 0;
+    public double targetOffsetAngle_Vertical;
+    public double angleToGoalDegrees;
+    public double angleToGoalRadians;
+    public double goalHeightInches;
 
     public TagTrackingLimelight() {
         table = NetworkTableInstance.getDefault().getTable("limelight");
