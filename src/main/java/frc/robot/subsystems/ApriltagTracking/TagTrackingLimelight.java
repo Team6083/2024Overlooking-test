@@ -148,7 +148,7 @@ public class TagTrackingLimelight extends SubsystemBase {
     /**
      * Returns a double array of botpose in target space. The former 3 refers to
      * translation, while the latter 3 refers to rotation (in the sequence of roll,
-     * pitch,yaw) In target space, (0,0,0) is the centre of the tag, x+ points to
+     * pitch, yaw) In target space, (0,0,0) is the centre of the tag, x+ points to
      * the right side (when you're facing the tag), y+ points down, z+ points to
      * front.
      * 

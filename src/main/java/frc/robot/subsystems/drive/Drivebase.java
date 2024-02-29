@@ -122,17 +122,17 @@ public class Drivebase extends SubsystemBase {
     facingNotePID = new PIDController(kP, kI, kD);
     followingTagPID = new PIDController(kfP, kfI, kfD);
     followingTagPID_X = new PIDController(
-        AprilTagTrackingConstants.kfollowingTagPID_X[0],
-        AprilTagTrackingConstants.kfollowingTagPID_X[1],
-        AprilTagTrackingConstants.kfollowingTagPID_X[2]);
+        AprilTagTrackingConstants.kPfollowX,
+        AprilTagTrackingConstants.kIfollowX,
+        AprilTagTrackingConstants.kDfollowX);
     followingTagPID_Y = new PIDController(
-        AprilTagTrackingConstants.kfollowingTagPID_Y[0],
-        AprilTagTrackingConstants.kfollowingTagPID_Y[1],
-        AprilTagTrackingConstants.kfollowingTagPID_Y[2]);
+        AprilTagTrackingConstants.kPfollowY,
+        AprilTagTrackingConstants.kIfollowY,
+        AprilTagTrackingConstants.kDfollowY);
     followingTagPID_R = new PIDController(
-        AprilTagTrackingConstants.kfollowingTagPID_R[0],
-        AprilTagTrackingConstants.kfollowingTagPID_R[1],
-        AprilTagTrackingConstants.kfollowingTagPID_R[2]);
+        AprilTagTrackingConstants.kPfollowR,
+        AprilTagTrackingConstants.kIfollowR,
+        AprilTagTrackingConstants.kDfollowR);
     facingTagPID = new PIDController(kP, kI, kD);
   }
 
