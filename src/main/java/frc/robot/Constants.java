@@ -130,15 +130,15 @@ public final class Constants {
 
   public static final class AprilTagTrackingConstants {
 
-    public static final double kPfollowX =  0.8;
-    public static final double kIfollowX =  0.0;
-    public static final double kDfollowX =  0.0;
-    public static final double kPfollowY =  0.8;
-    public static final double kIfollowY =  0.0;
-    public static final double kDfollowY =  0.006;
-    public static final double kPfollowR =  0.3;
-    public static final double kIfollowR =  0.0;
-    public static final double kDfollowR =  0.0;
+    public static final double kPfollowX = 0.8;
+    public static final double kIfollowX = 0.0;
+    public static final double kDfollowX = 0.0;
+    public static final double kPfollowY = 0.8;
+    public static final double kIfollowY = 0.0;
+    public static final double kDfollowY = 0.006;
+    public static final double kPfollowR = 0.3;
+    public static final double kIfollowR = 0.0;
+    public static final double kDfollowR = 0.0;
 
     public static final double[] kfollowingTagPID_X = { 0.8, 0.0, 0.0 };
     public static final double[] kfollowingTagPID_Y = { 0.8, 0, 0.006 };
@@ -153,6 +153,8 @@ public final class Constants {
     // Cam mounted facing forward, half a meter forward of center, half a meter up
     // from center.
     public static final Pose3d kRobotToCam = new Pose3d(new Translation3d(0.5, 0.0, 0.5),
+        new Rotation3d(0, 0, 0));
+    public static final Transform3d krobottocam = new Transform3d(new Translation3d(0.5, 0.0, 0.5),
         new Rotation3d(0, 0, 0));
 
     // The layout of the AprilTags on the field
