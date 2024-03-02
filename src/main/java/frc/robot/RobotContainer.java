@@ -67,7 +67,7 @@ public class RobotContainer {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
     drivebase = new Drivebase();
     drivebase.setDefaultCommand(new SwerveJoystickCmd(drivebase, mainController));
-    mainController.y().onTrue(new FaceTag(drivebase).withTimeout(0.5).andThen(new FollowCmd(drivebase).withTimeout(2)));;
+    // mainController.y().onTrue(new FaceTag(drivebase).withTimeout(0.5).andThen(new FollowCmd(drivebase).withTimeout(2)));;
     mainController.x().onTrue(new SwitchTrackConditionCmd(drivebase));
     // driverController.pov(90).onTrue(new AddTrackingError(drivetain));
     // driverController.pov(270).onTrue(new MinusTrackingError(drivetain));

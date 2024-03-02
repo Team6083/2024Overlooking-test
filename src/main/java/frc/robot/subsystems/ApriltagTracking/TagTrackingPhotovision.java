@@ -76,6 +76,7 @@ public class TagTrackingPhotovision extends SubsystemBase {
         // Construct PhotonPoseEstimator
         photonPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout,
                 PoseStrategy.CLOSEST_TO_REFERENCE_POSE, tagCamera, robotToCam);
+
         try {
             m_layout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2024Crescendo.m_resourceFile);
         } catch (IOException err) {
@@ -86,15 +87,26 @@ public class TagTrackingPhotovision extends SubsystemBase {
 
     }
 
-    public PhotonPipelineResult getPipelineResult(){
+    /**
+     * Returns pipeline result
+     * 
+     * @return (@link PhotonPipelineResult} results
+     */
+    public PhotonPipelineResult getPipelineResult() {
         results = tagCamera.getLatestResult();
         return results;
     }
 
-    public boolean hasTarget(){
+    /**
+     * If tag's detected
+     * 
+     * @return hasTarget
+     */
+    public boolean hasTarget() {
         hasTarget = getPipelineResult().hasTargets();
         return hasTarget;
     }
+
     /**
      * Get Best Target according to the pipeline.
      * 
@@ -108,6 +120,45 @@ public class TagTrackingPhotovision extends SubsystemBase {
         }
 
         return target;
+    }
+
+    /**
+     * Get a list of tracked tags according to the pipeline.
+     * 
+     * @return a list of tracked {@link PhotonTrackedTarget} tags
+     */
+    public List<PhotonTrackedTarget> getTargets() {
+        // results = getPipelineResult();
+        List<PhotonTrackedTarget> tags = getPipelineResult().getTargets();
+
+        // for (PhotonTrackedTarget trackedTags : tags) {
+        // // this calc assumes pitch angle is positive UP, so flip the camera's pitch
+        // pitch = trackedTags.getPitch();
+        // yaw = trackedTags.getYaw();
+        // y = cameraHeight * (1 / Math.tan(Math.toRadians(pitch + pitchDegree)));
+        // x = y * Math.tan(Math.toRadians(yaw - yawDegree)) + cameraWeight;
+        // // poses.add(new Pose2d(x, y, new Rotation2d(0)));
+        // }
+        return tags;
+    }
+
+    public List<Pose2d> getTags() {
+        List<Pose2d> poses = new ArrayList<Pose2d>();
+
+        double tagHeight = 0;
+        List<PhotonTrackedTarget> targets = results.getTargets();
+
+        // for(type var : arr) basically put each value of array arr into var, one by a
+        // time
+        for (PhotonTrackedTarget trackedTarget : targets) {
+            // this calc assumes pitch angle is positive UP, so flip the camera's pitch
+            pitch = trackedTarget.getPitch();
+            yaw = trackedTarget.getYaw();
+            y = tagHeight * (1 / Math.tan(Math.toRadians(pitch + pitchDegree)));
+            x = y * Math.tan(Math.toRadians(yaw - yawDegree)) + cameraWeight;
+            poses.add(new Pose2d(x, y, new Rotation2d(0)));
+        }
+        return poses;
     }
 
     public double[] getTagInfo() {
@@ -129,45 +180,41 @@ public class TagTrackingPhotovision extends SubsystemBase {
         return photonPoseEstimator.update();
     }
 
-    public List<Pose2d> getTags() {
-        List<Pose2d> poses = new ArrayList<Pose2d>();
+    // public Pose2d getTag() {
+    // Pose2d pose;
 
-        List<PhotonTrackedTarget> targets = results.getTargets();
+    // if (!tagCamera.isConnected()) {
+    // System.out.println("Camera not connected");
+    // }
 
-        // for(type var : arr) basically put each value of array arr into var, one by a
-        // time
-        for (PhotonTrackedTarget trackedTarget : targets) {
-            // this calc assumes pitch angle is positive UP, so flip the camera's pitch
-            pitch = trackedTarget.getPitch();
-            yaw = trackedTarget.getYaw();
-            y = cameraHeight * (1 / Math.tan(Math.toRadians(pitch + pitchDegree)));
-            x = y * Math.tan(Math.toRadians(yaw - yawDegree)) + cameraWeight;
-            poses.add(new Pose2d(x, y, new Rotation2d(0)));
-        }
-        return poses;
+    // PhotonTrackedTarget targets = getBestTarget();
+
+    // while (targets != null) {
+    // // this calc assumes pitch angle is positive UP, so flip the camera's pitch
+    // pitch = targets.getPitch();
+    // yaw = targets.getYaw();
+    // y = cameraHeight * (1 / Math.tan(Math.toRadians(pitch - pitchDegree)));
+    // x = y * Math.tan(Math.toRadians(yaw - yawDegree)) + cameraWeight;
+    // pose = new Pose2d(x, y, new Rotation2d(0));
+    // }
+    // pose = null;
+    // return pose;
+    // }
+
+    /**
+     * Return the last tag of the getTargets() list
+     * 
+     * @return {@link PhotontrackedTarget} last tag
+     */
+    public PhotonTrackedTarget getLastTag() {
+        return getTargets().get(0);
     }
 
-    public Pose2d getTag() {
-        Pose2d pose;
-
-        if (!tagCamera.isConnected()) {
-            System.out.println("Camera not connected");
-        }
-
-        PhotonTrackedTarget targets = getBestTarget();
-
-        while (targets != null) {
-            // this calc assumes pitch angle is positive UP, so flip the camera's pitch
-            pitch = targets.getPitch();
-            yaw = targets.getYaw();
-            y = cameraHeight * (1 / Math.tan(Math.toRadians(pitch - pitchDegree)));
-            x = y * Math.tan(Math.toRadians(yaw - yawDegree)) + cameraWeight;
-            pose = new Pose2d(x, y, new Rotation2d(0));
-        }
-        pose = null;
-        return pose;
-    }
-
+    /**
+     * Return the last tag of the getTargets() list
+     * 
+     * @return {@link Pose2d} last tag pose
+     */
     public Pose2d getLastPose() {
         return getTags().get(0);
     }
@@ -178,8 +225,8 @@ public class TagTrackingPhotovision extends SubsystemBase {
     }
 
     // public double getTagTx(){
-    //     double tx = getBestTarget().getTargetPixelsX();
-    //     return tx;
+    // double tx = getBestTarget().getTargetPixelsX();
+    // return tx;
     // }
 
     public Pose3d getBotPose() {
@@ -187,10 +234,10 @@ public class TagTrackingPhotovision extends SubsystemBase {
             Rotation3d rotation3d = new Rotation3d(0., 0., 0.);
             Transform3d camToTag = getBestTarget().getBestCameraToTarget();
             Optional<Pose3d> tag_Pose3d = m_layout.getTagPose(getTagID());
-            if(tag_Pose3d.isPresent()){
+            if (tag_Pose3d.isPresent()) {
                 Pose3d robotPose3d = PhotonUtils.estimateFieldToRobotAprilTag(camToTag, tag_Pose3d.get(), robotToCam);
-            return robotPose3d;
-        }
+                return robotPose3d;
+            }
         }
         return new Pose3d();
     }
@@ -225,13 +272,28 @@ public class TagTrackingPhotovision extends SubsystemBase {
     }
 
     /**
-     * Gets the tag's pose in 2 dimension
+     * Gets the best tag's pose in 2 dimension
      * 
-     * @return tagPose
+     * @return best tagPose
      */
     public Pose2d getTagPose2d() {
         if (hasTarget()) {
-            Optional<Pose3d> tag_Pose3d = m_layout.getTagPose((int) getTagID());
+            Optional<Pose3d> tag_Pose3d = m_layout.getTagPose(getTagID());
+            Pose2d tagPose2d = tag_Pose3d.isPresent() ? tag_Pose3d.get().toPose2d() : new Pose2d();
+            return tagPose2d;
+        } else {
+            return new Pose2d();
+        }
+    }
+
+        /**
+     * Gets the best tag's pose in 2 dimension
+     * 
+     * @return best tagPose
+     */
+    public Pose2d getDesiredTagPose(int index) {
+        if (hasTarget()) {
+            Optional<Pose3d> tag_Pose3d = m_layout.getTagPose(index);
             Pose2d tagPose2d = tag_Pose3d.isPresent() ? tag_Pose3d.get().toPose2d() : new Pose2d();
             return tagPose2d;
         } else {
