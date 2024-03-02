@@ -230,58 +230,6 @@ public class Drivebase extends SubsystemBase {
     return rot;
   }
 
-  public void follow() {
-    double x_dis = Math.abs(tag.getBT()[2]);
-    if (tag.getTv() == 1) {
-      double xSpeed = followingTagPID_X.calculate(x_dis, 1.5);
-      drive(xSpeed, 0, 0, true);
-    }
-  }
-
-  public void fixDistanceCT() {
-    double[] ct = tag.getCT();
-    double x_dis = ct[0];
-    double y_dis = ct[1];
-    double hasTarget = tag.getTv();
-    double xSpeed = 0;
-    double ySpeed = 0;
-    if (hasTarget == 1) {
-      xSpeed = followingTagPID.calculate(x_dis, 0);
-      ySpeed = followingTagPID.calculate(y_dis, 1);
-    }
-    SmartDashboard.putNumber("x_dis_speed", xSpeed);
-    SmartDashboard.putNumber("y_dis_speed", ySpeed);
-    drive(xSpeed, 0, 0, true);
-  }
-
-  public void Go_To_45_Angle_New() {
-    // double tan = Math.abs(tag.getBT()[0]) / Math.abs(tag.getBT()[2]);
-    double x_offset = tag.getBT()[0];
-    double z_offset = tag.getBT()[2];
-    faceToSpecificAnglePID = new PIDController(kPP, kII, kDD);
-    double xSpeed = 0;
-    double ySpeed = 0;
-    if (tag.getTv() == 1) {
-      xSpeed = faceToSpecificAnglePID.calculate(x_offset, 1);
-      ySpeed = followingTagPID.calculate(z_offset, 1);
-    }
-    if (Math.abs(x_offset - 1) > 0.01 && Math.abs(ySpeed - 1) > 0.01) {
-      drive(xSpeed, ySpeed, 0, false);
-    } else {
-      drive(0, 0, 0, false);
-    }
-  }
-
-  public void Keep_45_Angle() {
-    double offset = tag.getTlong() / tag.getTshort();
-    faceToSpecificAnglePID = new PIDController(kPP, kII, kDD);
-    double speed = 0;
-    if (tag.getTv() == 1) {
-      speed = faceToSpecificAnglePID.calculate(offset, 1.414);
-    }
-    drive(0, 0, speed, false);
-  }
-
   public void setRedSpeakerPipeline(){
     tag.setCamMode(1);
     tag.setLedMode(1);
