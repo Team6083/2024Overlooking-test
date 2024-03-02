@@ -53,6 +53,8 @@ public class TagTrackingPhotovision extends SubsystemBase {
     public final double pitchDegree = 15; // 90 - cam_offset
     public final double yawDegree = 0;
 
+    public boolean hasTarget;
+
     public PhotonPipelineResult results;
     public Transform3d robotToCam = VisionConstants.krobottocam;
     public AprilTagFieldLayout m_layout;
@@ -84,13 +86,22 @@ public class TagTrackingPhotovision extends SubsystemBase {
 
     }
 
+    public PhotonPipelineResult getPipelineResult(){
+        results = tagCamera.getLatestResult();
+        return results;
+    }
+
+    public boolean hasTarget(){
+        hasTarget = getPipelineResult().hasTargets();
+        return hasTarget;
+    }
     /**
      * Get Best Target according to the pipeline.
      * 
      * @return {@link PhotonTrackedTarget} best target
      */
     public PhotonTrackedTarget getBestTarget() {
-        results = tagCamera.getLatestResult();
+        results = getPipelineResult();
         PhotonTrackedTarget target = null;
         if (results.hasTargets()) {
             target = results.getBestTarget();
@@ -104,8 +115,8 @@ public class TagTrackingPhotovision extends SubsystemBase {
         PhotonTrackedTarget target = getBestTarget();
         ID = target.getFiducialId();
         distance = PhotonUtils.calculateDistanceToTargetMeters(
-                cameraHeight,
-                cameraHeight * (1 / Math.tan(Math.toRadians(target.getPitch() - pitchDegree))),
+                cameraHeight, // height
+                cameraHeight * (1 / Math.tan(Math.toRadians(target.getPitch() + pitchDegree))),
                 Math.toRadians(target.getPitch()),
                 Units.degreesToRadians(results.getBestTarget().getPitch()));
         tagInfo[0] = results.hasTargets() ? ID : 0;
@@ -121,16 +132,6 @@ public class TagTrackingPhotovision extends SubsystemBase {
     public List<Pose2d> getTags() {
         List<Pose2d> poses = new ArrayList<Pose2d>();
 
-        if (!tagCamera.isConnected()) {
-            System.out.println("Camera not connected");
-        }
-
-        results = tagCamera.getLatestResult();
-
-        if (!results.hasTargets()) {
-            System.out.println("No target");
-        }
-
         List<PhotonTrackedTarget> targets = results.getTargets();
 
         // for(type var : arr) basically put each value of array arr into var, one by a
@@ -139,7 +140,7 @@ public class TagTrackingPhotovision extends SubsystemBase {
             // this calc assumes pitch angle is positive UP, so flip the camera's pitch
             pitch = trackedTarget.getPitch();
             yaw = trackedTarget.getYaw();
-            y = cameraHeight * (1 / Math.tan(Math.toRadians(pitch - pitchDegree)));
+            y = cameraHeight * (1 / Math.tan(Math.toRadians(pitch + pitchDegree)));
             x = y * Math.tan(Math.toRadians(yaw - yawDegree)) + cameraWeight;
             poses.add(new Pose2d(x, y, new Rotation2d(0)));
         }
@@ -167,10 +168,19 @@ public class TagTrackingPhotovision extends SubsystemBase {
         return pose;
     }
 
+    public Pose2d getLastPose() {
+        return getTags().get(0);
+    }
+
     public int getTagID() {
         int ID = getBestTarget().getFiducialId();
         return ID;
     }
+
+    // public double getTagTx(){
+    //     double tx = getBestTarget().getTargetPixelsX();
+    //     return tx;
+    // }
 
     public Pose3d getBotPose() {
         if (getBestTarget() != null) {
@@ -214,31 +224,20 @@ public class TagTrackingPhotovision extends SubsystemBase {
             field.getObject(label).setPose(pose);
     }
 
-    // not done yet
-    public Pose3d tagFieldPose3d() {
-        Pose3d tagPose3d = new Pose3d();
-        return tagPose3d;
+    /**
+     * Gets the tag's pose in 2 dimension
+     * 
+     * @return tagPose
+     */
+    public Pose2d getTagPose2d() {
+        if (hasTarget()) {
+            Optional<Pose3d> tag_Pose3d = m_layout.getTagPose((int) getTagID());
+            Pose2d tagPose2d = tag_Pose3d.isPresent() ? tag_Pose3d.get().toPose2d() : new Pose2d();
+            return tagPose2d;
+        } else {
+            return new Pose2d();
+        }
     }
-
-    // copy paste
-    // public void convertCoordinateSystem() {
-
-    // Transform3d tagT3D = Geometry3D.Translation3d(tagTranslation['x'],
-    // tagTranslation['y'], tagTranslation['z']);
-    // Rotation3d tagR3D = Geometry3D.Rotation3d(
-    // Geometry3D.Quaternion(tagRotation['W'], tagRotation['X'], tagRotation['Y'],
-    // tagRotation['Z']));
-    // Pose3d tagPose3D = Geometry3D.Pose3d(tagT3D, tagR3D);
-
-    // Pose3d tagToCameraTransform = AprilTagPoseEstimator.estimate(tag);
-
-    // Pose3d wpiTranslation =
-    // CoordinateSystem.convert(tagToCameraTransform.getTranslation().rotateBy(tagToCameraTransform.inverse().rotation()),
-    // CoordinateSystem.EDN(),
-    // CoordinateSystem.NWU());
-
-    // // Pose3d cameraPose = tagPose3D.transformBy(wpiTransform.inverse());
-    // }
 
     public void putDashboard() {
         SmartDashboard.putNumber("distance", getTagInfo()[1]);
