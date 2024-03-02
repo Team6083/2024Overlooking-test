@@ -10,12 +10,15 @@ import org.photonvision.PhotonUtils;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -27,7 +30,7 @@ import frc.robot.Constants.VisionConstants;
 public class TagTrackingLimelight extends SubsystemBase {
     public NetworkTable table;
 
-    public Transform3d robotToCam = VisionConstants.kRobotToCam;
+    // public Transform3d robotToCam = VisionConstants.kRobotToCam;
     public AprilTagFieldLayout m_layout;
 
     public double v;
@@ -229,6 +232,22 @@ public class TagTrackingLimelight extends SubsystemBase {
     // double[] botpose = table.getEntry("botpose").getDoubleArray(new double [6]);
     // return botpose;
     // }
+
+    public Transform3d getBotPose(){
+        double[] btpose = table.getEntry("camerapose_robotspace").getDoubleArray(new double[6]);
+        Rotation3d btpose2 = new Rotation3d(btpose[3], btpose[4], btpose[5]);
+        Transform3d botpose = new Transform3d(btpose[0], btpose[1], btpose[2], btpose2);
+        return botpose;
+    }
+
+    public void AddVisionMeasurement(){
+        // Compute the robot's field-relative position exclusively from vision measurements.
+      Pose3d visionMeasurement3d = VisionConstants.kRobotToCam.plus(getBotPose());
+          // objectToRobotPose(m_objectInField, m_robotToCamera, m_cameraToObjectEntry);
+  
+      // Convert robot pose from Pose3d to Pose2d needed to apply vision measurements.
+      Pose2d visionMeasurement2d = visionMeasurement3d.toPose2d();
+  }
 
     /**
      * Gets the tag's pose in 2 dimension
