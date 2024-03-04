@@ -8,6 +8,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.VisionConstants;
 
 public class NoteTrackingLimelight extends SubsystemBase {
   /** Creates a new visionTracking. */
@@ -40,7 +41,7 @@ public class NoteTrackingLimelight extends SubsystemBase {
 
   public double getTx() {
     double tx = table.getEntry("tx").getDouble(0.0);
-    if(tx==0){
+    if (tx == 0) {
       System.out.println("Can't find target");
     }
     return tx;
@@ -48,6 +49,49 @@ public class NoteTrackingLimelight extends SubsystemBase {
 
   public double getTy() {
     return table.getEntry("ty").getDouble(0.0);
+  }
+
+  /**
+   * Return bot to note distance
+   * 
+   * @param camHeight
+   * @return bot to note distance
+   */
+  public double getXDistance(double camHeight) {
+    // double tx = getTx();
+    double degree = getNoteAngle(VisionConstants.cam_offset);
+    double radian = Math.toRadians(degree);
+    double distance = camHeight / Math.tan(radian);
+    return distance;
+  }
+
+  /**
+   * Return cam to note angle in vertical direction
+   * 
+   * @param cam_offset
+   * @return angle (degree)
+   */
+  public double getNoteAngle(double cam_offset) {
+    double degree = getTy() + cam_offset;
+    return degree;
+  }
+
+  public double getYDistance(double camHeight) {
+    double degree = getNoteTxAngle(VisionConstants.cam_offset);
+    double radian = Math.toRadians(degree);
+    double distance = camHeight / Math.tan(radian);
+    return distance;
+  }
+
+  /**
+   * Return cam to note angle in horizontal direction
+   * 
+   * @param cam_offset
+   * @return angle (degree)
+   */
+  public double getNoteTxAngle(double cam_offset) {
+    double degree = getTx() + cam_offset;
+    return degree;
   }
 
   public double getTa() {

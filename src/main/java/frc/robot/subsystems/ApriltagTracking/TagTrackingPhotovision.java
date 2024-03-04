@@ -142,6 +142,10 @@ public class TagTrackingPhotovision extends SubsystemBase {
         return tags;
     }
 
+    /**
+     * Returns a list of 2 demesional tag poses
+     * @return {@link}
+     */
     public List<Pose2d> getTags() {
         List<Pose2d> poses = new ArrayList<Pose2d>();
 
