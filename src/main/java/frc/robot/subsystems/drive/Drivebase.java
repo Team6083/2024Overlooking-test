@@ -150,18 +150,13 @@ public class Drivebase extends SubsystemBase {
         AprilTagTrackingConstants.kDfollowR);
     facingTagPID = new PIDController(kP, kI, kD);
     moveToSpecificPointPID = new PIDController(
-<<<<<<< HEAD
-      AprilTagTrackingConstants.kPmoveToSpecificPoint,
+     AprilTagTrackingConstants.kPmoveToSpecificPoint,
      AprilTagTrackingConstants.kImoveToSpecificPoint, 
      AprilTagTrackingConstants.kDmoveToSpecificPoint);
-     autosetRotation = new PIDController(ModuleConstants.kPRotController, ModuleConstants.kIRotController, ModuleConstants.kDRotController);
-
-
-=======
-        AprilTagTrackingConstants.kPmoveToSpecificPoint,
-        AprilTagTrackingConstants.kImoveToSpecificPoint,
-        AprilTagTrackingConstants.kDmoveToSpecificPoint);
->>>>>>> 96bc60604eaf5e994cdcb4c8c63e256343040015
+     autosetRotation = new PIDController(
+      ModuleConstants.kPRotController,
+      ModuleConstants.kIRotController,
+      ModuleConstants.kDRotController);
   }
 
   StructArrayPublisher<SwerveModuleState> publisher = NetworkTableInstance.getDefault()
@@ -357,25 +352,19 @@ public class Drivebase extends SubsystemBase {
   public double[] moveToSpecificPoint(double Zsetpoint, double Xsetpoint) {
     double Zlength = tag.getBT()[2];
     double Xlength = tag.getBT()[0];
-
     double Zspeed = 0;
     double Xspeed = 0;
-<<<<<<< HEAD
     Zspeed = moveToSpecificPointPID.calculate(Zlength,Zsetpoint);
     Xspeed = moveToSpecificPointPID.calculate(Xlength,Xsetpoint);
     double[] speed = {Zspeed,Xspeed};
-=======
-    Zspeed = moveToSpecificPointPID.calculate(Zlength, Zsetpoint);
-    Xspeed = moveToSpecificPointPID.calculate(Xlength, Xsetpoint);
-    double[] speed = { Zspeed, Xspeed };
->>>>>>> 96bc60604eaf5e994cdcb4c8c63e256343040015
     return speed;
   }
   
     public double autosetRotation(double setPoint){
       double currentRotation = gyroRotation2d().getDegrees();
       autosetRotation.setSetpoint(setPoint);
-      return autosetRotation.calculate(currentRotation);
+      double rot = autosetRotation.calculate(currentRotation);
+      return rot;
 
     } 
 }
