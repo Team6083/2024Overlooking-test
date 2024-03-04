@@ -160,6 +160,11 @@ public final class Constants {
     // The layout of the AprilTags on the field
     public static final AprilTagFieldLayout kTagLayout = AprilTagFields.kDefaultField.loadAprilTagLayoutField();
 
+    public static final double cam_offset = 0;
+    /**
+     * The vertical distance from the desired subsystem to the ground in metres.
+     */
+    public static final double camHeight = 0;
     // The standard deviations of our vision estimated poses, which affect
     // correction rate
     // (Fake values. Experiment and determine estimation noise on an actual robot.)

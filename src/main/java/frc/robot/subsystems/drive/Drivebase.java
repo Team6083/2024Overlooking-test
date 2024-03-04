@@ -22,8 +22,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.AprilTagTrackingConstants;
 import frc.robot.Constants.DrivebaseConstants;
+<<<<<<< HEAD
 import frc.robot.Constants.ModuleConstants;
+=======
+import frc.robot.Constants.VisionConstants;
+>>>>>>> 96bc60604eaf5e994cdcb4c8c63e256343040015
 import frc.robot.subsystems.ApriltagTracking.TagTrackingLimelight;
+import frc.robot.subsystems.NoteTracking.NoteTrackingLimelight;
 import frc.robot.subsystems.NoteTracking.NoteTrackingPhotovision;
 
 public class Drivebase extends SubsystemBase {
@@ -73,6 +78,7 @@ public class Drivebase extends SubsystemBase {
   private Boolean trackingCondition = false;
 
   private NoteTrackingPhotovision note;
+  private NoteTrackingLimelight Note;
   private TagTrackingLimelight tag;
 
   private SwerveModuleState[] swerveModuleStates = new SwerveModuleState[4];
@@ -97,6 +103,7 @@ public class Drivebase extends SubsystemBase {
         DrivebaseConstants.kBackRightDriveMotorInverted, DrivebaseConstants.kBackRightCanCoderMagOffset);
 
     tag = new TagTrackingLimelight();
+    Note = new NoteTrackingLimelight();
 
     SmartDashboard.putData("frontLeft", frontLeft);
     SmartDashboard.putData("frontRight", frontRight);
@@ -143,12 +150,18 @@ public class Drivebase extends SubsystemBase {
         AprilTagTrackingConstants.kDfollowR);
     facingTagPID = new PIDController(kP, kI, kD);
     moveToSpecificPointPID = new PIDController(
+<<<<<<< HEAD
       AprilTagTrackingConstants.kPmoveToSpecificPoint,
      AprilTagTrackingConstants.kImoveToSpecificPoint, 
      AprilTagTrackingConstants.kDmoveToSpecificPoint);
      autosetRotation = new PIDController(ModuleConstants.kPRotController, ModuleConstants.kIRotController, ModuleConstants.kDRotController);
 
 
+=======
+        AprilTagTrackingConstants.kPmoveToSpecificPoint,
+        AprilTagTrackingConstants.kImoveToSpecificPoint,
+        AprilTagTrackingConstants.kDmoveToSpecificPoint);
+>>>>>>> 96bc60604eaf5e994cdcb4c8c63e256343040015
   }
 
   StructArrayPublisher<SwerveModuleState> publisher = NetworkTableInstance.getDefault()
@@ -214,6 +227,16 @@ public class Drivebase extends SubsystemBase {
     }
   }
 
+  public double newFacingNoteRot(double currentRot) {
+    if (Note.getTv() == 1) {
+      // var pose = target.get(0);
+      double rot = -facingNotePID.calculate(Note.getTx(), 0);
+      return rot;
+    } else {
+      return currentRot;
+    }
+  }
+
   public double[] followingNoteSpeed() {
     var target = note.getNotes();
     double[] speed = new double[3];
@@ -233,8 +256,26 @@ public class Drivebase extends SubsystemBase {
     return speed;
   }
 
+  public double[] newFollowingNoteSpeed() {
+    // var target = note.getNotes();
+    double[] speed = new double[3];
+    speed[0] = 0;
+    speed[1] = 0;
+    speed[2] = 0;
+    if (Note.getTv() == 1) {
+      double xSpeed = facingNotePID.calculate(Note.getXDistance(VisionConstants.camHeight), 0.2);
+      double ySpeed = 0;
+      double rot = -facingNotePID.calculate(Note.getTx(), 0);
+      // return rot;
+      speed[0] = xSpeed;
+      speed[1] = ySpeed;
+      speed[2] = rot;
+    }
+    return speed;
+  }
+
   public void faceTarget() {
-    double offset =tag.getTx();
+    double offset = tag.getTx();
     double hasTarget = tag.getTv();
     double rot = 0;
     if (hasTarget == 1) {
@@ -254,11 +295,11 @@ public class Drivebase extends SubsystemBase {
     return rot;
   }
 
-  public void setRedSpeakerPipeline(){
+  public void setRedSpeakerPipeline() {
     tag.setCamMode(1);
     tag.setLedMode(1);
     tag.setPipeline(4);
-    }
+  }
 
   public void switchTrackCondition() {
     trackingCondition = !trackingCondition;
@@ -309,18 +350,25 @@ public class Drivebase extends SubsystemBase {
 
   /**
    * Move to specific point
+   * 
    * @param Zsetpoint back and forth
    * @param Xsetpoint left and right
    */
-  public double[] moveToSpecificPoint(double Zsetpoint,double Xsetpoint){
+  public double[] moveToSpecificPoint(double Zsetpoint, double Xsetpoint) {
     double Zlength = tag.getBT()[2];
     double Xlength = tag.getBT()[0];
-   
+
     double Zspeed = 0;
     double Xspeed = 0;
+<<<<<<< HEAD
     Zspeed = moveToSpecificPointPID.calculate(Zlength,Zsetpoint);
     Xspeed = moveToSpecificPointPID.calculate(Xlength,Xsetpoint);
     double[] speed = {Zspeed,Xspeed};
+=======
+    Zspeed = moveToSpecificPointPID.calculate(Zlength, Zsetpoint);
+    Xspeed = moveToSpecificPointPID.calculate(Xlength, Xsetpoint);
+    double[] speed = { Zspeed, Xspeed };
+>>>>>>> 96bc60604eaf5e994cdcb4c8c63e256343040015
     return speed;
   }
   
