@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems.drive;
 
+import com.ctre.phoenix6.hardware.Pigeon2;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -15,11 +16,13 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.AprilTagTrackingConstants;
 import frc.robot.Constants.DrivebaseConstants;
+import frc.robot.Constants.ModuleConstants;
 import frc.robot.subsystems.ApriltagTracking.TagTrackingLimelight;
 import frc.robot.subsystems.NoteTracking.NoteTrackingPhotovision;
 
@@ -38,7 +41,9 @@ public class Drivebase extends SubsystemBase {
   private final SwerveDriveKinematics kinematics;
   private final SwerveDriveOdometry odometry;
 
-  private final AHRS gyro;
+  private final AHRS navxmxp;
+  private final Pigeon2 pigeon2;
+  private final ADXRS450_Gyro greengyro;
 
   private PIDController facingNotePID;
   private PIDController facingTagPID;
@@ -49,6 +54,7 @@ public class Drivebase extends SubsystemBase {
 
   public PIDController faceToSpecificAnglePID;
   public PIDController moveToSpecificPointPID;
+  public PIDController autosetRotation;
   // face method value maybe correct
   private final double kP = 0.08;
   private final double kI = 0;
@@ -97,7 +103,9 @@ public class Drivebase extends SubsystemBase {
     SmartDashboard.putData("backLeft", backLeft);
     SmartDashboard.putData("backRight", backRight);
 
-    gyro = new AHRS(Port.kMXP);
+    navxmxp = new AHRS(Port.kMXP);
+    greengyro = new ADXRS450_Gyro();
+    pigeon2 = new Pigeon2(30);
 
     kinematics = new SwerveDriveKinematics(
         frontLeftLocation, frontRightLocation, backLeftLocation, backRightLocation);
@@ -138,19 +146,35 @@ public class Drivebase extends SubsystemBase {
       AprilTagTrackingConstants.kPmoveToSpecificPoint,
      AprilTagTrackingConstants.kImoveToSpecificPoint, 
      AprilTagTrackingConstants.kDmoveToSpecificPoint);
+     autosetRotation = new PIDController(ModuleConstants.kPRotController, ModuleConstants.kIRotController, ModuleConstants.kDRotController);
+
+
   }
 
   StructArrayPublisher<SwerveModuleState> publisher = NetworkTableInstance.getDefault()
       .getStructArrayTopic("MyStates", SwerveModuleState.struct).publish();
 
   public void setGyroReset() {
-    gyro.reset();
+    pigeon2.reset();
+    navxmxp.reset();
+    greengyro.reset();
+
   }
 
   public Rotation2d gyroRotation2d() {
-    return Rotation2d.fromDegrees(DrivebaseConstants.kGyroOffSet
-        + ((DrivebaseConstants.kGyroInverted) ? (360.0 - gyro.getRotation2d().getDegrees())
-            : gyro.getRotation2d().getDegrees()));
+    if(Math.abs(pigeon2.getAngle()-navxmxp.getAngle())<2){
+      return Rotation2d.fromDegrees(DrivebaseConstants.kGyroOffSet
+        + ((DrivebaseConstants.kGyroInverted) ? (360.0 - pigeon2.getRotation2d().getDegrees())
+            : pigeon2.getRotation2d().getDegrees()));
+    }else if(Math.abs(navxmxp.getAngle()-greengyro.getAngle())!=0){
+      return Rotation2d.fromDegrees(DrivebaseConstants.kGyroOffSet
+        + ((DrivebaseConstants.kGyroInverted) ? (360.0 - navxmxp.getRotation2d().getDegrees())
+            : navxmxp.getRotation2d().getDegrees()));
+    }else{
+      return Rotation2d.fromDegrees(DrivebaseConstants.kGyroOffSet
+        + ((DrivebaseConstants.kGyroInverted) ? (360.0 - greengyro.getRotation2d().getDegrees())
+            : greengyro.getRotation2d().getDegrees()));
+    }
   }
 
   /**
@@ -281,6 +305,7 @@ public class Drivebase extends SubsystemBase {
     updateOdometry();
     putDashboard();
   }
+  
 
   /**
    * Move to specific point
@@ -295,7 +320,14 @@ public class Drivebase extends SubsystemBase {
     double Xspeed = 0;
     Zspeed = moveToSpecificPointPID.calculate(Zlength,Zsetpoint);
     Xspeed = moveToSpecificPointPID.calculate(Xlength,Xsetpoint);
-    double [] speed = {Zspeed,Xspeed};
+    double[] speed = {Zspeed,Xspeed};
     return speed;
   }
+  
+    public double autosetRotation(double setPoint){
+      double currentRotation = gyroRotation2d().getDegrees();
+      autosetRotation.setSetpoint(setPoint);
+      return autosetRotation.calculate(currentRotation);
+
+    } 
 }
