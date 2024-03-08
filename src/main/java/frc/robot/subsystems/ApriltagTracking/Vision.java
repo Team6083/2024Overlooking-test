@@ -4,7 +4,7 @@
 
 // https://github.com/Team4028/2023-Drive/blob/alpha_auto/src/main/java/frc/robot/subsystems/Vision.java#L91
 
-package frc.robot.subsystems.ApriltagTracking;
+package frc.robot.subsystems.apriltagTracking;
 
 import java.io.IOException;
 import java.util.Optional;

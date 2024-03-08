@@ -1,3 +1,4 @@
+package frc.robot.subsystems.apriltagTracking;
 // /*      Apriltag has known pose on the field loaded from file
 //         Detected tag's perspective seen by the camera is used to calculate an estimate of the camera pose relative to the tag
 //         Camera has a known pose relative to the robot chassis hard coded herein

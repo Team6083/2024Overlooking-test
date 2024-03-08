@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package frc.robot.subsystems.ApriltagTracking;
+package frc.robot.subsystems.apriltagTracking;
 
 import frc.robot.Robot;
 import frc.robot.Constants.VisionConstants;
