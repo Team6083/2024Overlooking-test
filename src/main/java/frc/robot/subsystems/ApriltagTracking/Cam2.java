@@ -32,26 +32,26 @@ public class Cam2 extends SubsystemBase {
     private final String cameraName = "TagCamera";
     private final PhotonCamera tagCamera;
 
-    public final double cameraHeight = 0.14;
-    public final double cameraWeight = 0.0; // I'm still quite confused abt the meaning of having this
-    public final double pitchDegree = 10; // 90 - cam_offset
-    public final double yawDegree = 0;
-    public final double cameraPitch = 15;
-    public final double targetHeight = 1.3;
+    private final double cameraHeight = 0.14;
+    private final double cameraWeight = 0.0; // I'm still quite confused abt the meaning of having this
+    private final double pitchDegree = 10; // 90 - cam_offset
+    private final double yawDegree = 0;
+    private final double cameraPitch = 15;
+    private final double targetHeight = 1.3;
 
     public PhotonPipelineResult results;
-    public Transform3d robotToCam = VisionConstants.krobottocam;
+    private Transform3d robotToCam = VisionConstants.krobottocam;
     public AprilTagFieldLayout m_layout;
     // Construct PhotonPoseEstimator
     public PhotonPoseEstimator photonPoseEstimator;
 
-    public double distance;
-    public double yaw;
-    public double pitch;
-    public double x;
-    public double y;
-    public double ID;
-    public boolean hasTarget;
+    private double distance;
+    private double yaw;
+    private double pitch;
+    private double x;
+    private double y;
+    private double ID;
+    private boolean hasTarget;
 
     public Cam2() {
         tagCamera = new PhotonCamera(cameraName);
@@ -91,7 +91,7 @@ public class Cam2 extends SubsystemBase {
      * 
      * @return {@link PhotonTrackedTarget} best target
      */
-    public PhotonTrackedTarget getBestTarget() {
+    private PhotonTrackedTarget getBestTarget() {
         results = getPipelineResult();
         m_latestLatency = results.getLatencyMillis() / 1000.;
         PhotonTrackedTarget target = hasTarget()?results.getBestTarget():null;
@@ -191,7 +191,7 @@ public class Cam2 extends SubsystemBase {
     public Pose2d getLatestEstimatedRobotPose() {
 
         if (hasTarget()) {
-            Transform3d cameraToTarget = getBestTarget().getBestCameraToTarget();
+            Transform3d cameraToTarget = getBestTagTransform3d();
 
             Optional<Pose3d> tagPose = m_layout.getTagPose(getBestTarget().getFiducialId());
             // Use Optional so we don't need to do null check
